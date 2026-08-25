@@ -61,3 +61,17 @@ raw_sources:
 - Workspace 页面使用各自类型所需的最小字段，例如 `type`、`status`、`date`。
 - 会话、计划和迁移状态的字段不得复制到 Wiki 页面。
 - 不要求现有 Legacy 笔记立即补齐 Properties；字段迁移应随领域 compile 分批进行。
+
+### Daily
+
+```yaml
+---
+type: daily
+date: 2026-08-25
+status: open
+---
+```
+
+- `date` 必须为 `YYYY-MM-DD`，并与 `YYYY-MM-DD.daily.md` 文件名一致。
+- `status` 取值为 `open` 或 `closed`，只表示是否已完成 `/daily-review`。
+- 任务完成数、专注时长、番茄数等派生统计不得写入 YAML；它们保留在正文生成区或查询视图中。

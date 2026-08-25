@@ -23,8 +23,8 @@ updated: 2026-08-25
 - [[schema/linking|链接与溯源]]：wikilinks、来源链和附件规则。
 - [[schema/views|视图规范]]：Bases、Dataview、Tasks 和卡片展示的职责。
 - [[schema/version-control|Git 与 OneDrive]]：开发资产白名单、内容同步边界和提交规则。
-- `page-types/`：Raw、Workspace 和 Wiki 页面类型。
-- `workflows/`：ingest、compile、query、lint、会话和 legacy migration。
+- `page-types/`：Raw、Workspace、[[schema/page-types/daily|Daily]] 和 Wiki 页面类型。
+- `workflows/`：[[schema/workflows/daily|Daily]]、ingest、compile、query、lint、会话和 legacy migration。
 - `sources/`：Douban、WeRead 以及跨来源身份匹配。
 - `domains/`：当前已确认 Wiki 领域的补充规则。
 - `templates/`：新建 Wiki 与 Workspace 页面时使用的最小模板。

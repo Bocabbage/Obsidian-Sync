@@ -1,7 +1,8 @@
 ---
 type: implementation-spec
 status: agreed
-implementation_status: not-started
+implementation_status: in-progress
+phase_1_status: complete
 version: 1
 created: 2026-08-25
 updated: 2026-08-25
@@ -59,11 +60,11 @@ Daily 不再只是 `workspace/plans/` 下的任务表，而是一类独立的 Wo
 
 ### 页面内容
 
-- Morning：今日重点、预期成果、任务及关联季度目标。
-- During：临时记录、决策、阻塞和产生的材料。
-- Evening：完成情况、偏差原因、收获和未完成事项。
+- Morning：大任务、小任务，以及用户按需手工加入的 DIDA 任务链接；DIDA 不是唯一来源。
+- During：直接更新当天任务切片的 Checkbox；任务相关进展写在任务下，独立产出写入“产生的材料”，不建立单独的“过程中”栏目。
+- Evening：`/daily-review` 只为大任务、小任务中已关联的 DIDA 任务生成当天番茄钟与正计时，并保留人工收尾。
 - Knowledge Candidates：值得后续 compile 的概念、来源或问题。
-- Tomorrow：需要明确延续到下一天的事项。
+- 未闭环：通过查询显示旧 Daily 中的未完成切片，默认不复制到下一天。
 
 ### 数据约束
 
@@ -71,19 +72,22 @@ Daily 不再只是 `workspace/plans/` 下的任务表，而是一类独立的 Wo
 - YAML 只保存日期、页面类型、状态等稳定字段，不保存会频繁变化的总结统计。
 - Knowledge Candidate 只是候选，不因写入 Daily 自动成为 Wiki 事实。
 - 晨间和晚间更新同一文件，不分别建立 morning/review 文件。
+- Daily Checkbox 表示当天计划完成的切片，不表示 DIDA 整体任务状态；DIDA 状态不得自动覆盖 Checkbox。
+- DIDA 链接由用户手工加入大任务或小任务；`/daily-review` 只读 focus 明细，使用 `tasks[].taskId` 匹配并按实际毫秒时长换算。
 
-### 需要提升到 Schema 的内容
+### 已提升到 Schema 的内容
 
-- 新增 Daily page type、模板和 workflow。
-- 更新 Workspace 路由与 Properties 规范。
-- 重写 `daily` Skill 的路径、交互和晚间复盘规则。
-- 建立 Daily 总览，为后续 Canvas 提供稳定入口。
+- [[schema/page-types/daily|Daily page type]]、[[schema/templates/daily-template|模板]]和 [[schema/workflows/daily|workflow]]。
+- Workspace 路由、Properties 与视图规范。
+- `.agents` / `.claude` 同步的 `daily` Skill 及只读 DIDA focus 聚合脚本。
+- `workspace/daily/index.md` 总览，为后续 Canvas 提供稳定入口。
 
 ### 验收
 
-- 连续完成至少一次晨间创建和晚间复盘。
-- 未完成任务能够被查询，但不会被无提示复制到下一天。
-- Knowledge Candidates 能够被单独汇总和人工选择 compile。
+- 已验证：`workspace/daily/2026/2026-08/2026-08-25.daily.md` 按正式模板创建，并由晚间 focus 聚合生成区刷新为 `closed`。
+- 已验证：未完成的大任务、小任务由 Dataview `TASK` 查询，模板和 Skill 均不自动复制任务。
+- 已验证：Knowledge Candidates 在 Daily 总览中单独汇总，compile 仍要求用户明确选择。
+- 已验证：测试 DIDA 任务当天聚合为 9 个番茄、3h45m；结果与独立 CLI/JQ 聚合的 9 条记录、13500000 毫秒一致。
 
 ## 5. Phase 2：Douban / WeRead 身份与目标模型
 
@@ -230,10 +234,11 @@ Canvas 只负责布局、入口和状态概览，不直接保存任务、书目�
 
 ### Phase 1 前
 
-- Daily 正式路径是否采用 `workspace/daily/`，替代当前 `workspace/plans/.../daily/`。
-- 行动项是否统一使用 Markdown task；表格只做摘要，不作为任务事实源。
-- 未完成任务采用查询汇总还是人工显式迁移；默认不自动复制。
-- Knowledge Candidates 是否必须人工确认后才能 compile；建议是。
+- 已确认：Daily 正式采用 `workspace/daily/`，不迁移或改写旧计划。
+- 已确认：行动项使用 Markdown task，表格不作为任务事实源。
+- 已确认：未完成任务通过查询显示；当天继续时由用户重新描述切片或再次引用，默认不自动复制。
+- 已确认：Knowledge Candidates 必须由用户明确选择后才能 compile。
+- 已确认：保留大任务、小任务；DIDA 链接由用户早上按需手工加入，晚间只生成关联任务当天的专注计时。
 
 ### Phase 2 前
 

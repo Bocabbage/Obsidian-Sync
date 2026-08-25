@@ -43,6 +43,9 @@ workspace/drafts/*
 !/workspace/plans/
 workspace/plans/*
 !/workspace/plans/README.md
+!/workspace/daily/
+workspace/daily/*
+!/workspace/daily/index.md
 !/workspace/_assets/
 workspace/_assets/*
 !/workspace/_assets/README.md

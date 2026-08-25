@@ -45,6 +45,7 @@
 | 健康检查 | `schema/workflows/lint.md` | `wiki/_meta/lint-report.md` |
 | 迁移 Legacy | `schema/workflows/migrate-legacy.md` | `workspace/migrations/` + 目标层 |
 | 会话记录 | `schema/workflows/session.md` + `session-log` Skill | `workspace/sessions/` |
+| Daily 创建与复盘 | `schema/workflows/daily.md` + `daily` Skill | `workspace/daily/` |
 
 ## Raw 与来源
 
@@ -63,7 +64,8 @@
 ## Workspace
 
 - 会话摘要写入 `workspace/sessions/{年份}/YYYY-MM/`。
-- Daily 与 Quarterly Plan 写入 `workspace/plans/`，旧计划留在 Archived，不自动迁回。
+- Daily 写入 `workspace/daily/{年份}/YYYY-MM/`；Quarterly Plan 继续写入 `workspace/plans/`，旧计划留在 Archived，不自动迁回。
+- DIDA 只是 Daily 的可选任务关联和专注来源；不自动拉取今日任务，也不使用 DIDA 整体状态覆盖当天 Checkbox。
 - 一次性迁移进度写入 `workspace/migrations/`，后续事项写入 `workspace/backlog.md`。
 - Workspace 内容只有经过 compile 才进入 Wiki。
 
