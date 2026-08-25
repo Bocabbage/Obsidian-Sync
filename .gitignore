@@ -1,0 +1,96 @@
+# This vault is synced by OneDrive. Git is a development history for
+# agent rules, schemas, reusable views and formatting assets only.
+
+# Ignore every top-level vault item by default, then allowlist below.
+/*
+
+# Root governance and reusable entry views
+!/.gitignore
+!/AGENTS.md
+!/CLAUDE.md
+!/卡片导航.md
+
+# Agent skills and compatibility entrypoints; never track local permissions.
+!/.agents/
+!/.agents/**
+.agents/**/.claude/
+.agents/**/settings.local.json
+
+!/.claude/
+.claude/*
+!/.claude/skills/
+!.claude/skills/**
+.claude/**/.claude/
+.claude/**/settings.local.json
+
+# Active knowledge-system contracts and templates
+!/schema/
+!/schema/**
+
+# Workspace framework, approved specs and migration control records
+!/workspace/
+workspace/*
+!/workspace/AGENTS.md
+!/workspace/README.md
+!/workspace/backlog.md
+!/workspace/specs/
+!/workspace/specs/**
+!/workspace/migrations/
+!/workspace/migrations/**
+!/workspace/drafts/
+workspace/drafts/*
+!/workspace/drafts/README.md
+!/workspace/plans/
+workspace/plans/*
+!/workspace/plans/README.md
+!/workspace/_assets/
+workspace/_assets/*
+!/workspace/_assets/README.md
+
+# Wiki routing skeleton only; compiled knowledge stays OneDrive-only.
+!/wiki/
+wiki/*
+!/wiki/AGENTS.md
+!/wiki/index.md
+!/wiki/sources/
+wiki/sources/*
+!/wiki/sources/index.md
+!/wiki/_assets/
+wiki/_assets/*
+!/wiki/_assets/README.md
+!/wiki/computer-science/
+wiki/computer-science/*
+!/wiki/computer-science/AGENTS.md
+!/wiki/computer-science/index.md
+!/wiki/photography/
+wiki/photography/*
+!/wiki/photography/AGENTS.md
+!/wiki/photography/index.md
+!/wiki/language/
+wiki/language/*
+!/wiki/language/AGENTS.md
+!/wiki/language/index.md
+!/wiki/health/
+wiki/health/*
+!/wiki/health/AGENTS.md
+!/wiki/health/index.md
+
+# Migration guards inside otherwise OneDrive-only Root Legacy directories
+!/legacy-读书/
+legacy-读书/*
+!/legacy-读书/AGENTS.md
+!/legacy-电影/
+legacy-电影/*
+!/legacy-电影/AGENTS.md
+
+# Reusable formatting code only; UI state, themes and plugin data stay local.
+!/.obsidian/
+.obsidian/*
+!/.obsidian/snippets/
+!.obsidian/snippets/**
+
+# Operating-system and Obsidian transient files
+.DS_Store
+**/.DS_Store
+.trash/
+**/.trash/

@@ -1,0 +1,4 @@
+interface:
+  display_name: "读书结构维护"
+  short_description: "在迁移期安全处理书籍来源、Legacy 记录和作者卡片请求"
+  default_prompt: "使用 $reading-maintenance 检查书籍来源与 Legacy 边界，并安全规划本次读书维护。"

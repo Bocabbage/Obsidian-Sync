@@ -1,0 +1,70 @@
+/* Compact spacing for PLN and other Obsidian themes.
+ * Disable this snippet to restore the theme defaults.
+ */
+
+/* Shared spacing variables used by Obsidian and PLN. */
+body {
+  --p-spacing: 0.35rem;
+  --heading-spacing: 0.65rem;
+}
+
+/* Reading view: reduce the large gaps around headings and blocks. */
+.markdown-rendered {
+  --p-spacing: 0.35rem;
+  --heading-spacing: 0.65rem;
+}
+
+.markdown-rendered :is(h1, h2, h3, h4, h5, h6) {
+  margin-block-start: 0.65em;
+  margin-block-end: 0.25em;
+}
+
+/* Keep tables and callouts from adding another large vertical gap. */
+.markdown-rendered table,
+.markdown-rendered .callout {
+  margin-block-start: 0.65rem;
+  margin-block-end: 0.65rem;
+}
+
+/* Live Preview: keep the editor closer to Reading view. */
+.markdown-source-view.mod-cm6 .cm-content {
+  --p-spacing: 0.35rem;
+  --heading-spacing: 0.65rem;
+}
+
+/* Live Preview heading lines. PLN adds spacing after a heading through
+ * the following line; keep that spacing compact in the editor as well. */
+.markdown-source-view.mod-cm6 .cm-line[class*="HyperMD-header"] {
+  padding-top: 0.35em;
+  padding-bottom: 0.1em;
+}
+
+.markdown-source-view.mod-cm6
+  .cm-line[class*="HyperMD-header"]
+  + .cm-line:not([class*="HyperMD-header"]):not(:has(> br:only-child)) {
+  padding-top: 0.35rem;
+}
+
+/* Movie library: keep Dataview tables aligned with the readable text column.
+ * The card view deliberately keeps its wider layout and is not affected. */
+.markdown-preview-view.table-left .block-language-dataview,
+.markdown-source-view.mod-cm6.table-left .cm-embed-block {
+  width: 100%;
+  max-width: var(--line-width);
+  margin-inline: auto;
+}
+
+.markdown-preview-view.table-left .dataview.table-view-table,
+.markdown-source-view.mod-cm6.table-left .dataview.table-view-table {
+  width: 100%;
+  --table-edge-cell-padding-first: 0px;
+}
+
+/* Movie cards: align the card grid with the readable text column while
+ * preserving the existing cards and cards-cols-3 behavior. */
+.markdown-preview-view.cards-left .block-language-dataview,
+.markdown-source-view.mod-cm6.cards-left .cm-embed-block {
+  width: 100%;
+  max-width: var(--line-width);
+  margin-inline: auto;
+}
