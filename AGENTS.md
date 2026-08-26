@@ -46,11 +46,12 @@
 | 迁移 Legacy | `schema/workflows/migrate-legacy.md` | `workspace/migrations/` + 目标层 |
 | 会话记录 | `schema/workflows/session.md` + `session-log` Skill | `workspace/sessions/` |
 | Daily 创建与复盘 | `schema/workflows/daily.md` + `daily` Skill | `workspace/daily/` |
+| 书籍与影视目录 | `schema/workflows/media-catalog.md` + source adapters | `wiki/sources/*/index.md` |
 
 ## Raw 与来源
 
 - `raws/Douban/`、`raws/WeRead/` 和根 `assets/` 由同步插件维护，Agent 默认不得手工改写。
-- 不在插件文件中增加跨来源链接；Douban 与 WeRead 的身份合并写入 `wiki/sources/`。
+- 不在插件文件中增加跨来源链接；Douban 与 WeRead 的自动关系由目录视图推导，例外覆盖写入 `wiki/sources/link-overrides/`。
 - 书籍匹配优先使用 ISBN，标题相似不得直接合并；见 `schema/sources/identity-resolution.md`。
 - 需要调整同步模板、覆盖行为或附件路径时，先读取插件配置和官方文档，并将其视为单独配置任务。
 
@@ -58,13 +59,14 @@
 
 - 普通 Query 从 `wiki/index.md` 和领域 Map 开始，只有核实原文时再进入 Raw。
 - `wiki/**/legacy-*` 可以参与查询，但必须视为 provisional 内容，不能假定来源和字段完整。
-- 新 Wiki 页面按 `schema/page-types/` 创建，优先更新已有页面而不是制造重复总结。
+- 新 Wiki 页面按 `schema/page-types/` 创建，优先更新已有页面而不是制造重复总结；Douban 媒体目录不要求为每个 Raw 建立 source page。
 - Ingest、compile、query 存档和 lint 操作追加到 `wiki/_meta/log.md`；普通会话不写入该日志。
 
 ## Workspace
 
 - 会话摘要写入 `workspace/sessions/{年份}/YYYY-MM/`。
 - Daily 写入 `workspace/daily/{年份}/YYYY-MM/`；Quarterly Plan 继续写入 `workspace/plans/`，旧计划留在 Archived，不自动迁回。
+- Reading Note 写入 `workspace/reading/books/`，Viewing Note 写入 `workspace/viewing/`；两者都只在确有人工内容时按需建立。
 - DIDA 只是 Daily 的可选任务关联和专注来源；不自动拉取今日任务，也不使用 DIDA 整体状态覆盖当天 Checkbox。
 - 一次性迁移进度写入 `workspace/migrations/`，后续事项写入 `workspace/backlog.md`。
 - Workspace 内容只有经过 compile 才进入 Wiki。
@@ -86,7 +88,7 @@ Minimal + CSS snippets = 展示层
 
 - 视图不是新的事实来源，详细规范见 `schema/views.md`。
 - 不直接修改主题原文件；样式调整放入 `.obsidian/snippets/`。
-- 当前根 `assets/` 不作普通共享附件目录使用；新 Wiki 附件放 `wiki/_assets/<domain>/`，Workspace 附件放 `workspace/_assets/`。
+- 当前根 `assets/` 不作普通共享附件目录使用；媒体目录可以只读展示其中的 Douban 封面。新 Wiki 附件放 `wiki/_assets/<domain>/`，Workspace 附件放 `workspace/_assets/`。
 
 ## 文件操作与检查
 

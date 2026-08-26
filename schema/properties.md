@@ -1,7 +1,7 @@
 ---
 type: schema
 schema: properties
-updated: 2026-08-25
+updated: 2026-08-26
 ---
 
 # Properties 规范
@@ -56,11 +56,26 @@ raw_sources:
 - 示例中的说明文字必须替换成真实 wikilink，不保留虚构链接。
 - 普通知识页的 `sources` 应优先链接编译来源页，而不是直接堆叠多个插件文件。
 
+### Douban 目录与跨源覆盖
+
+- Douban 目录视图直接读取 Raw 的 `doubanId`、`type`、`title`、`state`、`score`、`collectionDate` 等字段；这些插件字段不批量改名。
+- `doubanId` 是目录锚点，必须按字符串比较；文件名和标题不是稳定 ID。
+- ISBN 完全一致的 Douban–WeRead 关系可以由视图动态推导，不要求为每本书创建 source page。
+- 只有无法自动推导或需要阻止自动匹配时才创建 `type: source-link` 页面。
+
 ## Workspace 字段
 
 - Workspace 页面使用各自类型所需的最小字段，例如 `type`、`status`、`date`。
 - 会话、计划和迁移状态的字段不得复制到 Wiki 页面。
 - 不要求现有 Legacy 笔记立即补齐 Properties；字段迁移应随领域 compile 分批进行。
+
+### Reading Note 与 Viewing Note
+
+- `reading-note` 和 `viewing-note` 都是按需页面，不作为媒体目录。
+- `catalog_source` 链接 Douban Raw，`douban_id` 保存相同条目的稳定平台 ID。
+- `weread_source` 只用于 Reading Note，并链接实际 WeRead Raw。
+- `rating` 始终表示用户评分，采用 `0`～`10` 数值；平台评分继续保留在 Douban Raw 的 `score`。
+- Reading Note 的 `medium` 可取 `weread`、`print`、`other` 或 `unknown`；不得仅凭没有 WeRead 文件就推断为纸质书。
 
 ### Daily
 

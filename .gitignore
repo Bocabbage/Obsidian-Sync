@@ -46,6 +46,12 @@ workspace/plans/*
 !/workspace/daily/
 workspace/daily/*
 !/workspace/daily/index.md
+!/workspace/reading/
+workspace/reading/*
+!/workspace/reading/README.md
+!/workspace/viewing/
+workspace/viewing/*
+!/workspace/viewing/README.md
 !/workspace/_assets/
 workspace/_assets/*
 !/workspace/_assets/README.md
@@ -58,6 +64,17 @@ wiki/*
 !/wiki/sources/
 wiki/sources/*
 !/wiki/sources/index.md
+!/wiki/sources/books/
+wiki/sources/books/*
+!/wiki/sources/books/index.md
+!/wiki/sources/movies/
+wiki/sources/movies/*
+!/wiki/sources/movies/index.md
+!/wiki/sources/series/
+wiki/sources/series/*
+!/wiki/sources/series/index.md
+!/wiki/sources/_views/
+!/wiki/sources/_views/**
 !/wiki/_assets/
 wiki/_assets/*
 !/wiki/_assets/README.md
@@ -77,14 +94,10 @@ wiki/language/*
 wiki/health/*
 !/wiki/health/AGENTS.md
 !/wiki/health/index.md
-
-# Migration guards inside otherwise OneDrive-only Root Legacy directories
-!/legacy-读书/
-legacy-读书/*
-!/legacy-读书/AGENTS.md
-!/legacy-电影/
-legacy-电影/*
-!/legacy-电影/AGENTS.md
+!/wiki/cinema/
+wiki/cinema/*
+!/wiki/cinema/AGENTS.md
+!/wiki/cinema/index.md
 
 # Reusable formatting code only; UI state, themes and plugin data stay local.
 !/.obsidian/

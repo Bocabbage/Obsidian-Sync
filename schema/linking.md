@@ -1,7 +1,7 @@
 ---
 type: schema
 schema: linking
-updated: 2026-08-25
+updated: 2026-08-26
 ---
 
 # 链接与溯源
@@ -27,6 +27,8 @@ raws/<source-system>/...
 - concept、entity、synthesis 页面通过 `sources` 链接来源页。
 - 直接引用 Raw 中的具体段落时，可以在正文增加对应 Raw wikilink或块引用，但不替代来源页。
 - 不在插件控制的 Raw 文件中手工添加反向链接；由来源页承担汇聚关系。
+
+Douban 媒体目录是一个特例：目录视图可以直接读取 Raw，并按 ISBN 动态连接 WeRead。无法自动推导的关系由 `wiki/sources/link-overrides/` 承担；Reading Note、Viewing Note 和评论页从人工页面单向链接 Douban Raw。
 
 ## 别名与同名
 

@@ -2,7 +2,7 @@
 type: schema
 schema: page-type
 page_type: source
-updated: 2026-08-25
+updated: 2026-08-26
 ---
 
 # Wiki Source
@@ -18,3 +18,5 @@ updated: 2026-08-25
 - 与其他版本、作品或来源页的关系。
 
 来源页可以随新 Raw 更新，但不得假装替代原始材料；重要判断必须能够回溯到 Raw。
+
+Douban 媒体目录不要求为每个 Raw 条目建立 source page：目录视图直接读取 Raw；ISBN 可自动连接的 WeRead 分支也由视图推导。只有需要稳定摘要、来源质量说明或跨版本讨论时才按需创建 source page。纯关系覆盖使用 `type: source-link`，不复制整套来源元数据。

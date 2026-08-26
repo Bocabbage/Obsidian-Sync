@@ -1,7 +1,7 @@
 ---
 type: map
 title: Wiki Index
-updated: 2026-08-25
+updated: 2026-08-26
 ---
 
 # Wiki Index
@@ -14,6 +14,7 @@ updated: 2026-08-25
 - [[wiki/photography/index|Photography]]
 - [[wiki/language/index|Language]]
 - [[wiki/health/index|Health]]
+- [[wiki/cinema/index|Cinema]]
 
 ## 来源与维护
 

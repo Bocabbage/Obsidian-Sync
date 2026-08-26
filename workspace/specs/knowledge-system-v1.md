@@ -3,9 +3,13 @@ type: implementation-spec
 status: agreed
 implementation_status: in-progress
 phase_1_status: complete
+phase_2_status: complete
+phase_3_status: complete
+phase_4_status: complete
+phase_5_status: complete
 version: 1
 created: 2026-08-25
-updated: 2026-08-25
+updated: 2026-08-26
 ---
 
 # Knowledge System v1
@@ -15,17 +19,17 @@ updated: 2026-08-25
 在现有 Raw、Workspace、Wiki、Schema 所有权边界上，依次建立：
 
 1. 可持续使用的 Daily 工作循环。
-2. Douban 与 WeRead 的书籍身份、链接和封面字段规范。
-3. `legacy-读书/` 与 `legacy-电影/` 的可验证迁移流程。
-4. 基于稳定 Properties 的书籍与影视卡片。
+2. 以 Douban Raw 为唯一媒体目录，并将 WeRead、人工阅读和观影内容作为分支连接。
+3. `legacy-读书/` 与 `legacy-电影/` 的可验证拆分和退役。
+4. 直接消费 Raw 与稳定人工字段的书籍、电影和剧集卡片。
 5. 汇聚 Daily、来源新增、阅读观看状态和 Wiki 更新的 Canvas 首页。
 
-本 Spec 固化目标、顺序、边界和待确认决策；它不表示这些功能已经实现。
+本 Spec 固化目标、顺序、边界和决策；各 Phase 是否已经实现以文件头状态和对应验收记录为准。
 
 ## 2. 不变边界
 
 - `raws/Douban/`、`raws/WeRead/` 和根 `assets/` 仍由插件维护，默认只读。
-- Douban 与 WeRead Raw 不直接互相写链接，跨来源关系由 `wiki/sources/` 承担。
+- Douban 与 WeRead Raw 不直接互相写链接；精确 ISBN 关系由目录视图推导，例外关系由 `wiki/sources/link-overrides/` 承担。
 - Workspace 保存个人状态和过程，Wiki 保存长期可复用知识。
 - Bases、Dataview、Minimal 卡片和 Canvas 都是视图，不成为唯一数据源。
 - Legacy 迁移采用小批次、可核验方式；完成验收前不删除原文件或附件。
@@ -35,14 +39,14 @@ updated: 2026-08-25
 
 ```text
 Daily v2
-  → 来源身份与目标对象模型
-  → Legacy 小样本试迁移
-  → 卡片视图
-  → Legacy 批量迁移
+  → Douban 唯一目录与分支模型
+  → Legacy 验证与拆分
+  → Douban 卡片视图
+  → Legacy 退役
   → Canvas 首页
 ```
 
-后一个阶段依赖前一个阶段提供的真实字段和路径；除小样本验证外，不并行建设依赖尚未稳定的数据视图。
+后一个阶段依赖前一个阶段提供的真实字段和路径。实际实施时，Phase 2 审计发现两个 Root Legacy 目录规模有限，因此在同一轮内连续完成 Phase 2～5，并在每个内部检查点后再进入下一步。
 
 ## 4. Phase 1：Daily v2
 
@@ -93,110 +97,105 @@ Daily 不再只是 `workspace/plans/` 下的任务表，而是一类独立的 Wo
 
 ### 目标
 
-用编译来源页表示一个可辨识的书籍版本，并把平台元数据、个人阅读状态和知识分析分开。
+以 Douban Raw 作为书籍、电影和剧集的唯一目录，不为每个条目复制 compiled source page；把平台元数据、个人阅读过程和长期知识分析分开。
 
 ### 关系
 
 ```text
-raws/Douban/book/... ─┐
-                      ├→ wiki/sources/.../某本书.md
-raws/WeRead/... ──────┘
+Douban 书籍 Raw（目录锚点）
+  ├─ ISBN 精确匹配 / 人工覆盖 ─→ WeRead Raw
+  └─ 按需 ────────────────────→ Workspace Reading Note
 
-个人阅读状态 ─────────→ Workspace 阅读记录
-作者与主题分析 ───────→ Wiki entity / concept / synthesis
+Douban 电影 / 剧集 Raw（目录锚点）
+  ├─ 按需 ────────────────────→ Workspace Viewing Note
+  └─ compile ─────────────────→ Cinema entity / concept / synthesis
 ```
+
+只有 WeRead、尚无 Douban 条目的版本继续保留在 Raw，并通过维护审计发现；它不自动形成第二套正式书目。
 
 ### 身份规则
 
-- ISBN 完全一致时可以自动形成同版本候选，仍需检查明显异常。
-- ISBN 不同但标题、作者一致时只建立相关版本关系，不自动合并。
+- ISBN 完全一致且没有人工覆盖时自动形成同版本链接。
+- ISBN 相同但出版社、出版日期等存在明显异常时，人工覆盖为 `conflict`，候选链接仍可显示但必须待复核。
+- ISBN 不同但标题、作者一致时只建立 `same_work` 相关版本关系，不自动合并。
 - 没有 ISBN 时使用标题、作者、出版社和年份生成候选，并要求复核。
 - 只凭标题相似不得自动合并。
 - Douban ID 与 WeRead bookId 分字段保存，不能相互替代。
-- 跨版本讨论通过作品实体页表达，不把所有版本强行合并为一页。
+- Douban 条目是导航锚点，不强制等同于抽象作品实体；跨版本讨论确有需要时再建立作品实体页。
 
-### 卡片所需的最小稳定字段
+### 稳定字段与页面
 
-- `type`
-- `source_type`
-- `title`
-- `creators`
-- `cover`
-- `identifiers`
-- `raw_sources`
-- `identity_status`
-- `created`
-- `updated`
+- 目录直接读取 Douban Raw 的 `doubanId`、`type`、`title`、`state`、`score`、`collectionDate`、作者/导演等插件字段。
+- `source-link` 只保存 `douban_id`、实际 Raw 链接、`relation`、`identity_status` 和证据，不复制书籍元数据。
+- Reading Note 保存人工内容、阅读媒介、个人状态和评分；Viewing Note 保存个人观看日期、评分和评论。
+- 作者、导演和主题分析经过 compile 后进入 Wiki entity / concept / synthesis。
 
-个人评分、阅读进度、想读/在读/已读不进入来源页的稳定元数据，进入 Workspace 阅读记录。
+### 封面策略
 
-### 需要提升到 Schema 的内容
+- 根 `assets/` 继续由 Douban 插件维护，目录优先只读解析同名 JPG / WebP / PNG；命名不一致时使用 Raw 正文中的插件封面路径回退，链接失效时只接受唯一的文件名前缀候选。
+- 不复制 Legacy 封面，不把根 `assets/` 改成共享附件目录。
+- Reading Note 过程附件进入 `workspace/_assets/reading/`；Cinema 长期知识附件进入 `wiki/_assets/cinema/`。
 
-- 扩展 source page type 和 Properties 字段契约。
-- 补充书籍版本、作品实体和人工确认状态。
-- 为 `cover` 定义本地路径、外部 URL、缺失值和插件覆盖规则。
-- 定义 Workspace 阅读记录；影视观看记录在 Legacy 试点时按同一原则单独定型。
+### 已提升到 Schema 的内容
+
+- `schema/workflows/media-catalog.md`。
+- `schema/page-types/reading-note.md`、`viewing-note.md` 和 `source-link.md`。
+- Douban、WeRead、identity resolution、Properties、linking 和 views 契约。
+- `reading-maintenance` 正式维护 Skill。
 
 ### 验收
 
-- 至少验证仅 Douban、仅 WeRead、两者匹配、不同版本和疑似冲突五类样本。
-- 每个合并决定都可回溯到 Raw 文件和匹配依据。
-- Raw 文件没有被加入人工维护字段或跨来源反向链接。
+- 已审计 94 个 Douban 书籍、56 个 WeRead 书籍；36 个 ISBN 精确匹配，平台 ID 与 ISBN 均无重复。
+- 已验证：仅 Douban `两条鳄鱼`、仅 WeRead `逻辑学导论（第15版）`、精确匹配 `十一个时区之旅`、相关版本 `活着回来的男人`、冲突候选 `洛丽塔`。
+- 每个人工关系均链接实际 Raw 并记录证据；Raw 没有加入人工字段或跨来源反向链接。
+- 完整审计见 `workspace/migrations/round-2-media-catalog.md`。
 
-## 6. Phase 3：Legacy 小样本试迁移
+## 6. Phase 3：Legacy 验证与拆分
 
-### 范围
+两个 Root Legacy 目录合计只有 41 个文件，审计后在一个可核验批次内完成全部拆分，不再保留“试点后等待批量”的中间态。
 
-- 先选 3～5 本书，覆盖 Douban、WeRead、双来源、作者分析和个人读书内容。
-- 再选 3～5 个影视对象，覆盖电影、剧集、导演分析和个人观影内容。
-- 读书优先，因为它能同时验证双来源身份和个人状态拆分。
-
-### 拆分目标
+### 实际拆分
 
 | Legacy 内容 | 目标 |
 |---|---|
 | 平台原始元数据 | 保留或链接 Raw |
-| 书籍、电影、剧集对象 | `wiki/sources/` |
-| 阅读、观影状态与体验 | Workspace 对象记录 |
-| 作者、导演、主题分析 | Wiki entity/concept/synthesis |
-| 卡片与列表 | 派生视图 |
-| 封面与旧附件 | 按所有权逐项决定，不批量搬运 |
+| 书籍、电影、剧集目录 | Douban Raw + `wiki/sources/*/index.md` 派生视图 |
+| 阅读、观影状态与体验 | Workspace Reading / Viewing Note |
+| 作者、导演、主题分析 | 有实际内容者进入 Wiki 或相关 Reading Note；空壳不迁移 |
+| 卡片、列表与旧模板 | 由新 Schema 与 DataviewJS 视图替代 |
+| 封面 | 使用根 `assets/` 插件缓存，Legacy 重复图不迁移 |
+| 过程图与知识图 | 分别进入 Workspace / Wiki 附件目录 |
 
 ### 验收
 
-- 小样本中的路径、字段、wikilink 和附件可正常使用。
-- 同一事实没有在 Raw、Workspace 和 Wiki 中产生多个手工事实源。
-- 试迁移发现的问题先回写 Spec，再修改 Schema。
-- 原 Legacy 内容保留到新结构通过检查为止。
+- 5 份 Reading Note 保留人工内容，其中 `涅朵奇卡` 只保存 WeRead 当前缺失的一句补遗。
+- 1 份 Viewing Note 保留 Legacy 评分并明确语义待确认；空壳观影页和 AI 演示不迁移。
+- `摄影`、`场面调度`、`剪辑`、`小津安二郎` 及 2 张思维导图进入 Cinema Wiki。
+- 新页面 YAML、wikilink 和附件引用通过检查后，才执行 Legacy 退役。
 
 ## 7. Phase 4：卡片视图
 
-### 视图分层
+### 实现
 
-- Raw Inbox：最近同步的 Douban / WeRead 条目，用于发现新增来源。
-- Compiled Library：规范化后的书籍、电影和剧集来源页。
-- Personal Activity：想读、在读、已读、想看、看过等 Workspace 状态。
-
-### 实现原则
-
-- 优先使用已启用的 Obsidian Bases 构建 Property 卡片和筛选。
-- Dataview 只承担 Bases 不便表达的复杂查询、统计和任务汇总。
-- Minimal/CSS 只负责封面比例、卡片密度和布局，不修补缺失数据。
-- 卡片字段以小样本验证后的正式 Schema 为准，不直接绑定偶然的插件模板字段。
+- `wiki/sources/books/index.md`、`movies/index.md` 和 `series/index.md` 是稳定入口。
+- `wiki/sources/_views/douban-catalog/` 使用 DataviewJS 跨目录连接 Douban、WeRead、人工覆盖和 Workspace Note；这是 Bases 当前不便表达的关系查询。
+- 支持标题/作者/导演搜索，Douban 状态、关联分支和冲突筛选，以及最近记录、标题和平台评分排序。
+- 卡片分别显示 Douban 平台评分、WeRead 状态、人工媒介/状态和个人评分；可跳转本地 Raw、豆瓣网页、WeRead Raw、`weread://` 与人工笔记。
+- 视图按 Raw 文件名解析根 `assets/` 的实际扩展名，适配书籍 JPG 与电影/剧集 WebP；对 1 个 Raw 与封面命名不一致且插件链接失效的样本，采用唯一文件名前缀候选。
 
 ### 验收
 
-- 删除视图不会丢失任何书籍、影视或个人状态数据。
-- 缺封面、身份待确认和缺个人状态的对象可以被筛选出来。
-- 卡片可以作为后续批量迁移的质量检查入口。
+- 视图代码通过 JavaScript 语法检查，入口路径与 Dataview `dv.view` 加载规则一致。
+- 删除视图不会丢失任何来源、关系覆盖或个人笔记事实。
+- 自动匹配、相关版本、冲突和人工分支均可在卡片中区分。
 
 ## 8. Phase 5：Legacy 批量迁移
 
-- 按小样本确认的映射逐批处理 `legacy-读书/`，再处理 `legacy-电影/`。
-- 每批记录文件数、目标、异常和检查结果。
-- 同步更新导航、Skills、旧 Dataview 查询和附件引用。
-- 全部迁移且 lint 通过后，另行取得用户确认再决定删除、归档或保留旧目录。
-- 读书迁移完成后，将 `reading-maintenance` 从迁移保护 Skill 重写为正式维护 Skill。
+- 已按 Phase 3 映射完整处理 `legacy-读书/` 与 `legacy-电影/`。
+- 4 个有效过程附件先迁移到新位置；其余重复封面随旧目录快照保留。
+- 验收通过后，两个旧目录剩余 37 个文件移动到 `.trash/knowledge-system-v1-2026-08-26/`，没有永久删除，可按原目录整体恢复。
+- 旧 Dataview 卡片、模板、空壳作者/导演页和 AI 演示不进入新结构。
+- `reading-maintenance` 已从迁移保护 Skill 重写为正式目录维护 Skill。
 
 ## 9. Phase 6：Canvas 首页
 
@@ -242,16 +241,16 @@ Canvas 只负责布局、入口和状态概览，不直接保存任务、书目�
 
 ### Phase 2 前
 
-- `wiki/sources/` 是否按 `books/`、`movies/`、`series/` 分目录。
-- Workspace 阅读和观影记录采用何种目录名与最小字段。
-- 卡片 `cover` 使用插件缓存路径、外部 URL，还是建立规范附件；建议优先引用现有缓存，不复制。
-- 人工确认身份冲突时使用 Property、迁移清单还是两者结合。
+- 已确认：`wiki/sources/` 按 `books/`、`movies/`、`series/` 提供目录入口，不批量建立对象页。
+- 已确认：Reading Note 使用 `workspace/reading/books/`；Viewing Note 使用 `workspace/viewing/movies/` 或 `series/`。
+- 已确认：卡片只读使用 Douban 插件的根 `assets/` 缓存，不复制封面。
+- 已确认：人工身份关系使用 `source-link` Property；迁移清单记录批次与验收证据。
 
 ### Legacy 批量迁移前
 
-- 原文件完成验收后的处置方式：删除、移入 Archived 或保留一段观察期。
-- 是否保留旧文件名作为 alias，以及哪些旧入口需要兼容跳转页。
-- 附件去重和无引用附件的处理方式。
+- 已确认：验收后的旧目录移入可恢复 `.trash` 快照，不保留旧入口跳转页。
+- 已确认：重复封面不迁移；有实际引用价值的过程图和思维导图迁入所属层附件目录。
+- 已确认：Raw、附件缓存、普通 Workspace / Wiki 正文继续由 OneDrive 管理，Git 只跟踪可复现 Schema、Skill、入口和视图代码。
 
 ### Canvas 前
 

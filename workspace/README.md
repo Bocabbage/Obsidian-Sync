@@ -1,6 +1,6 @@
 ---
 type: workspace-index
-updated: 2026-08-25
+updated: 2026-08-26
 ---
 
 # Workspace
@@ -12,6 +12,8 @@ updated: 2026-08-25
 - `specs/`：已经形成共识、但尚未全部实现的系统演进规格。
 - `migrations/`：一次性结构迁移清单和进度。
 - `drafts/`：尚未决定是否进入 Wiki 的草稿。
+- `reading/`：确有人工摘抄、想法、评分或非 WeRead 阅读过程时按需建立的 Reading Note。
+- `viewing/`：确有个人评分、观看日期或评论时按需建立的 Viewing Note。
 - [[workspace/backlog|Backlog]]：不阻塞当前工作的后续事项。
 
 长期可复用结论经过 `schema/workflows/compile.md` 定义的流程进入 Wiki。

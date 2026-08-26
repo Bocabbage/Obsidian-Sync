@@ -1,4 +1,4 @@
 interface:
-  display_name: "读书结构维护"
-  short_description: "在迁移期安全处理书籍来源、Legacy 记录和作者卡片请求"
-  default_prompt: "使用 $reading-maintenance 检查书籍来源与 Legacy 边界，并安全规划本次读书维护。"
+  display_name: "读书目录维护"
+  short_description: "维护 Douban 目录、WeRead 关联、人工阅读笔记与卡片"
+  default_prompt: "使用 $reading-maintenance 按正式目录模型处理这次书籍来源、阅读笔记或卡片维护。"

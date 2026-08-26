@@ -1,7 +1,7 @@
 ---
 type: schema
 schema: taxonomy
-updated: 2026-08-25
+updated: 2026-08-26
 ---
 
 # 分类体系
@@ -16,7 +16,7 @@ updated: 2026-08-25
 ## 领域目录
 
 - 使用稳定的英文小写 kebab-case 作为 Wiki 一级领域目录名。
-- 当前确认的领域是 `computer-science`、`photography`、`language`、`health`。
+- 当前确认的领域是 `computer-science`、`photography`、`language`、`health`、`cinema`。
 - 页面只有一个主要领域时使用 `domain`；确实跨领域时可使用 `domains` 列表并选择一个主要存放位置。
 - 跨领域主题优先通过 wikilinks 和 `topics` 连接，不为多重分类复制正文。
 - 只有跨领域页面形成稳定集合时才创建共享领域目录，不提前建立空分类。

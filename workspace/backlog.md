@@ -1,7 +1,7 @@
 ---
 type: backlog
 status: active
-updated: 2026-08-25
+updated: 2026-08-26
 ---
 
 # 知识库 Backlog
@@ -10,15 +10,15 @@ updated: 2026-08-25
 
 ## 来源与对象记录
 
-- [ ] 建立 Douban 与 WeRead 书籍身份匹配清单，并按 ISBN 优先生成 `wiki/sources/` 来源页。
-- [ ] 设计读书记录在 Workspace 中的正式结构，再迁移 `legacy-读书`。
-- [ ] 设计观影记录在 Workspace 中的正式结构，再迁移 `legacy-电影`。
-- [ ] 明确根 `assets/` 的长期附件策略；当前继续由 Douban 插件维护。
+- [x] 以 Douban 为唯一媒体目录；ISBN 精确匹配由视图推导，例外关系使用 `source-link` 覆盖。
+- [x] 建立 `workspace/reading/books/` Reading Note，并完成 `legacy-读书` 迁移。
+- [x] 建立 `workspace/viewing/` Viewing Note，并完成 `legacy-电影` 迁移。
+- [x] 明确根 `assets/` 继续作为 Douban 插件封面缓存，只读用于卡片展示。
 
 ## 视图
 
-- [ ] 为 Douban 书籍、电影和剧集补充可查询的封面字段。
-- [ ] 使用 Bases 或 Dataview + Minimal 重建书籍与影视卡片；此项不阻塞来源同步和 Wiki 编译。
+- [x] 书籍、电影和剧集卡片按实际文件名解析根 `assets/` 的 JPG / WebP 封面，不回写 Raw 字段。
+- [x] 使用 DataviewJS 重建书籍与影视卡片，支持状态、分支、冲突、搜索和排序筛选。
 - [ ] 在正式视图建立后更新或替换根 `卡片导航.md`。
 
 ## Wiki 编译
@@ -30,4 +30,4 @@ updated: 2026-08-25
 ## Agent 与计划
 
 - [ ] 在新的 `workspace/plans/` 上实际使用一次 Daily 和 Quarterly Skills，并根据结果调整格式。
-- [ ] 读书/影视拆分完成后解除 `reading-maintenance` 的迁移保护并重写其正式维护路径。
+- [x] 解除 `reading-maintenance` 的迁移保护并重写为正式目录维护 Skill。

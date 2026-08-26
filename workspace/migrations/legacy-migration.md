@@ -2,7 +2,7 @@
 type: migration
 status: active
 created: 2026-08-25
-updated: 2026-08-25
+updated: 2026-08-26
 ---
 
 # Legacy Migration
@@ -13,8 +13,8 @@ updated: 2026-08-25
 
 | 目录 | 约文件数 | 当前判断 | 目标 | 状态 |
 |---|---:|---|---|---|
-| `legacy-读书/` | 21 | 书籍记录、个人阅读内容、作者分析、模板、视图和附件混合 | Raw 引用 + Workspace 阅读记录 + Wiki 来源/作者/知识 + 派生视图 | 待设计 |
-| `legacy-电影/` | 20 | 观影记录、影片对象、导演/电影分析、模板、视图和附件混合 | Raw 引用 + Workspace 观影记录 + Wiki 来源/导演/知识 + 派生视图 | 待设计 |
+| `legacy-读书/` | 21 | 书籍记录、个人阅读内容、作者分析、模板、视图和附件混合 | Douban 目录 + Workspace Reading Note + 关系覆盖 + 卡片视图 | 已完成（2026-08-26） |
+| `legacy-电影/` | 20 | 观影记录、影片对象、导演/电影分析、模板、视图和附件混合 | Douban 目录 + Workspace Viewing Note + Cinema Wiki + 卡片视图 | 已完成（2026-08-26） |
 | `legacy-对话日志/` | 24 | Agent 会话摘要 | `workspace/sessions/` | 已完成（2026-08-25） |
 
 ## Wiki Legacy
@@ -37,3 +37,4 @@ updated: 2026-08-25
 ## 迁移记录
 
 - 2026-08-25：将 `legacy-对话日志/` 整体移动到 `workspace/sessions/`，保留原年份、月份和文件名；同步更新 `session-log` Skill。
+- 2026-08-26：完成 Douban 唯一媒体目录、WeRead 分支、Reading / Viewing Note 和 Cinema Wiki 改造；迁移 4 个过程附件后，将 `legacy-读书/` 与 `legacy-电影/` 的剩余 37 个文件移动到 `.trash/knowledge-system-v1-2026-08-26/`。该快照可恢复，未永久删除。

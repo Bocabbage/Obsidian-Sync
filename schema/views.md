@@ -1,7 +1,7 @@
 ---
 type: schema
 schema: views
-updated: 2026-08-25
+updated: 2026-08-26
 ---
 
 # 视图规范
@@ -20,4 +20,6 @@ Minimal/CSS snippets = 展示层
 - 电影、书籍等竖版封面卡片使用 `cards-2-3`；方形图片使用 `cards-1-1`。
 - 既有 Minimal 卡片继续使用 `cards`、`cards-cover`、`cards-left`、`cards-standardized`，公共样式放在 `.obsidian/snippets/card-layout.css`。
 - 不直接修改主题原文件；样式变更只进入 snippets。
-- Douban 卡片展示属于后续视图任务，不阻塞 Raw 导入与框架搭建。
+- Douban 媒体目录使用 `wiki/sources/_views/douban-catalog/` 的可复用 DataviewJS 视图，直接读取 Raw 和根 `assets/`；同名封面缺失时只读解析 Raw 中的插件封面路径，失效时只接受唯一的文件名前缀候选。
+- 目录可以按标题、状态和分支筛选，并显示 WeRead、Reading Note 或 Viewing Note 链接；这些派生关系不成为新的事实来源。
+- ISBN 自动关联仅适用于没有人工覆盖的完全一致值；`source-link` 的冲突、拒绝和相关版本判断优先于自动结果。
