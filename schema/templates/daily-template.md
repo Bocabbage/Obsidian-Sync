@@ -19,15 +19,23 @@ WHERE file.day < this.file.day
   AND (
     meta(section).subpath = "大任务"
     OR meta(section).subpath = "小任务"
+    OR meta(section).subpath = "1 高优先级"
+    OR meta(section).subpath = "2 低优先级"
   )
 SORT file.day DESC
 ```
 
 ## 大任务
 
+### 1. 高优先级
+
+### 2. 低优先级
+
 ## 小任务
 
 ## 产生的材料
+
+### 碎碎念
 
 ## Knowledge Candidates
 

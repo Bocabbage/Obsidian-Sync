@@ -1,7 +1,7 @@
 ---
 type: workspace-record
 status: active
-updated: 2026-08-25
+updated: 2026-08-27
 ---
 
 # Daily 总览
@@ -30,6 +30,8 @@ WHERE !completed
   AND (
     meta(section).subpath = "大任务"
     OR meta(section).subpath = "小任务"
+    OR meta(section).subpath = "1 高优先级"
+    OR meta(section).subpath = "2 低优先级"
   )
 GROUP BY file.link
 SORT file.day DESC
