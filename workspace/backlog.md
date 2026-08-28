@@ -1,7 +1,7 @@
 ---
 type: backlog
 status: active
-updated: 2026-08-26
+updated: 2026-08-28
 ---
 
 # 知识库 Backlog
@@ -19,7 +19,14 @@ updated: 2026-08-26
 
 - [x] 书籍、电影和剧集卡片按实际文件名解析根 `assets/` 的 JPG / WebP 封面，不回写 Raw 字段。
 - [x] 使用 DataviewJS 重建书籍与影视卡片，支持状态、分支、冲突、搜索和排序筛选。
-- [ ] 在正式视图建立后更新或替换根 `卡片导航.md`。
+- [x] 在正式视图建立后移除根 `卡片导航.md`，由 Sources 与 Homepage 接管入口。
+
+## Homepage 与 Todo
+
+- [x] 建立 `workspace/overview.canvas` 第一版，聚合 Calendar、Today、Media、Todo 与 Knowledge。
+- [x] 完成 Homepage 自动打开 Markdown Dashboard、Dataview 五面板渲染与无报错运行态验收。
+- [ ] Obsidian 或 Homepage 升级后复测 Canvas 直接启动；当前版本因嵌入节点初始化时序问题保留为手动视觉入口。
+- [x] 建立 `workspace/tasks/` Task Entity、Daily occurrence 与 DIDA 映射边界，并由 Tasks 接管 Homepage Todo 数据源。
 
 ## Wiki 编译
 

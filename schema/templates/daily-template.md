@@ -8,21 +8,19 @@ status: open
 
 > [[workspace/daily/index|📅 Daily 总览]]
 
-## 未闭环
+## 任务池
+
+> [[workspace/tasks/index|查看全部 Tasks]] · 只把今天实际推进的 Task 作为 occurrence 放入下方。
 
 ```dataview
-TASK
-FROM "workspace/daily"
-WHERE file.day < this.file.day
-  AND !completed
-  AND status != "-"
-  AND (
-    meta(section).subpath = "大任务"
-    OR meta(section).subpath = "小任务"
-    OR meta(section).subpath = "1 高优先级"
-    OR meta(section).subpath = "2 低优先级"
-  )
-SORT file.day DESC
+TABLE WITHOUT ID
+  link(file.path, title) AS "任务",
+  priority AS "优先级",
+  status AS "状态"
+FROM "workspace/tasks"
+WHERE type = "task" AND (status = "active" OR status = "blocked" OR status = "inbox")
+SORT choice(priority = "high", 1, choice(priority = "normal", 2, 3)) ASC, updated DESC
+LIMIT 8
 ```
 
 ## 大任务
@@ -48,4 +46,5 @@ SORT file.day DESC
 ## 收尾
 
 - 今天完成或推进：
+- 已交接或取消：
 - 明天关注：

@@ -46,6 +46,12 @@ workspace/plans/*
 !/workspace/daily/
 workspace/daily/*
 !/workspace/daily/index.md
+!/workspace/tasks/
+workspace/tasks/*
+!/workspace/tasks/index.md
+!/workspace/overview.canvas
+!/workspace/overview/
+!/workspace/overview/**
 !/workspace/reading/
 workspace/reading/*
 !/workspace/reading/README.md

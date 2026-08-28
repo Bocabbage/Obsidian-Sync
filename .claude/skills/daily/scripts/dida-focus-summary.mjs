@@ -1,10 +1,15 @@
 #!/usr/bin/env node
 
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 
 const DIDA_URL_RE =
   /https:\/\/(?:www\.)?dida365\.com\/webapp\/#p\/([0-9a-f]{24})\/tasks\/([0-9a-f]{24})/gi;
+const DIDA_URL_SINGLE_RE =
+  /https:\/\/(?:www\.)?dida365\.com\/webapp\/#p\/([0-9a-f]{24})\/tasks\/([0-9a-f]{24})/i;
+const TASK_LINK_RE =
+  /\[\[(workspace\/tasks\/TASK-\d{6}-\d{3})(?:\.md)?(?:#[^\]|]*)?(?:\|([^\]]+))?\]\]/g;
 const SECTION_NAMES = new Set(["大任务", "小任务"]);
 
 function usage() {
@@ -138,8 +143,87 @@ function fallbackTitleForUrl(sectionText, url) {
     .trim();
 }
 
-function extractDidaTasks(markdown) {
-  const sectionText = extractTaskSections(markdown);
+function vaultRootFor(filePath) {
+  let current = dirname(resolve(filePath));
+  while (true) {
+    if (existsSync(join(current, "workspace")) && existsSync(join(current, "schema"))) {
+      return current;
+    }
+    const parent = dirname(current);
+    if (parent === current) break;
+    current = parent;
+  }
+  throw new Error("Cannot locate Vault root for " + filePath);
+}
+
+function frontmatter(markdown) {
+  return markdown.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)?.[1] ?? "";
+}
+
+function scalarProperty(yaml, key) {
+  const escaped = escapeRegExp(key);
+  const raw = yaml.match(new RegExp("^" + escaped + ":[ \\t]*(.*?)[ \\t]*$", "m"))?.[1] ?? "";
+  if (!raw || raw === "null" || raw === "~") return "";
+  if ((raw.startsWith('"') && raw.endsWith('"')) || (raw.startsWith("'") && raw.endsWith("'"))) {
+    return raw.slice(1, -1).trim();
+  }
+  return raw.trim();
+}
+
+function taskEntityDidaTasks(sectionText, dailyFile) {
+  const root = vaultRootFor(dailyFile);
+  const tasks = [];
+  const seenPaths = new Set();
+
+  for (const match of sectionText.matchAll(TASK_LINK_RE)) {
+    const localPath = match[1];
+    if (seenPaths.has(localPath)) continue;
+    seenPaths.add(localPath);
+
+    const absolutePath = join(root, localPath + ".md");
+    if (!existsSync(absolutePath)) {
+      throw new Error("Task Entity not found: " + localPath);
+    }
+
+    const yaml = frontmatter(readFileSync(absolutePath, "utf8"));
+    if (scalarProperty(yaml, "type") !== "task") {
+      throw new Error("Linked page is not type: task: " + localPath);
+    }
+
+    const localTaskId = scalarProperty(yaml, "task_id");
+    const title = scalarProperty(yaml, "title") || match[2] || localTaskId;
+    const configuredUrl = scalarProperty(yaml, "dida_url");
+    const configuredProjectId = scalarProperty(yaml, "dida_project_id").toLowerCase();
+    const configuredTaskId = scalarProperty(yaml, "dida_task_id").toLowerCase();
+    const urlMatch = configuredUrl.match(DIDA_URL_SINGLE_RE);
+
+    if (!configuredUrl && !configuredProjectId && !configuredTaskId) continue;
+    if (!urlMatch && !(configuredProjectId && configuredTaskId)) {
+      throw new Error("Incomplete DIDA mapping on " + localPath);
+    }
+
+    const projectId = (urlMatch?.[1] ?? configuredProjectId).toLowerCase();
+    const taskId = (urlMatch?.[2] ?? configuredTaskId).toLowerCase();
+    if (
+      (configuredProjectId && configuredProjectId !== projectId) ||
+      (configuredTaskId && configuredTaskId !== taskId)
+    ) {
+      throw new Error("DIDA URL and ID fields disagree on " + localPath);
+    }
+
+    tasks.push({
+      projectId,
+      taskId,
+      url: "https://dida365.com/webapp/#p/" + projectId + "/tasks/" + taskId,
+      fallbackTitle: title,
+      localPath,
+      localTaskId,
+    });
+  }
+  return tasks;
+}
+
+function directDidaTasks(sectionText) {
   const tasks = [];
   const seen = new Set();
 
@@ -159,6 +243,19 @@ function extractDidaTasks(markdown) {
     });
   }
   return tasks;
+}
+
+function extractDidaTasks(markdown, dailyFile) {
+  const sectionText = extractTaskSections(markdown);
+  const byTaskId = new Map();
+
+  for (const task of taskEntityDidaTasks(sectionText, dailyFile)) {
+    byTaskId.set(task.taskId, task);
+  }
+  for (const task of directDidaTasks(sectionText)) {
+    if (!byTaskId.has(task.taskId)) byTaskId.set(task.taskId, task);
+  }
+  return [...byTaskId.values()];
 }
 
 function runDidaJson(binary, args) {
@@ -266,6 +363,12 @@ function markdownEscape(value) {
   return value.replaceAll("\\", "\\\\").replaceAll("]", "\\]");
 }
 
+function taskIdentity(task) {
+  const title = markdownEscape(task.title);
+  if (task.localPath) return "[[" + task.localPath + "|" + title + "]]";
+  return "[" + title + "](" + task.url + ")";
+}
+
 function sumDuration(records) {
   return records.reduce((total, record) => total + durationSeconds(record), 0);
 }
@@ -304,20 +407,22 @@ function buildSummary(tasks, pomodoroRecords, timingRecords, binary) {
         .map((record) => focusTaskTitle(record, task.taskId))
         .find(Boolean) ?? "";
 
-    let title = focusTitle;
-    try {
-      const detail = runDidaJson(binary, [
-        "task",
-        "get",
-        task.projectId,
-        task.taskId,
-        "--json",
-      ]);
-      if (typeof detail.title === "string" && detail.title.trim()) {
-        title = detail.title.trim();
+    let title = task.localPath ? task.fallbackTitle : focusTitle;
+    if (!task.localPath) {
+      try {
+        const detail = runDidaJson(binary, [
+          "task",
+          "get",
+          task.projectId,
+          task.taskId,
+          "--json",
+        ]);
+        if (typeof detail.title === "string" && detail.title.trim()) {
+          title = detail.title.trim();
+        }
+      } catch {
+        // Focus aggregation remains useful when task metadata is unavailable.
       }
-    } catch {
-      // Focus aggregation remains useful when task metadata is unavailable.
     }
 
     title = title || task.fallbackTitle || task.taskId;
@@ -345,7 +450,7 @@ function renderMarkdown(summary) {
   if (summary.linkedTaskCount === 0) {
     return [
       "- 关联任务合计：0m",
-      "- 未在“大任务”或“小任务”中找到 DIDA 链接。",
+      "- 未找到 Task Entity 上的 DIDA 映射或 Daily 直接 DIDA 链接。",
     ].join("\n");
   }
 
@@ -374,15 +479,8 @@ function renderMarkdown(summary) {
     }
 
     const suffix = details.length > 0 ? "（" + details.join("；") + "）" : "";
-    lines.push(
-      "  - [" +
-        markdownEscape(task.title) +
-        "](" +
-        task.url +
-        ")：" +
-        formatDuration(task.totalSeconds) +
-        suffix,
-    );
+    const source = task.localPath ? " · [DIDA](" + task.url + ")" : "";
+    lines.push("  - " + taskIdentity(task) + "：" + formatDuration(task.totalSeconds) + suffix + source);
   }
 
   return lines.join("\n");
@@ -392,7 +490,7 @@ function main() {
   const options = parseArgs(process.argv.slice(2));
   const markdown = readFileSync(options.file, "utf8");
   const date = extractDate(markdown, options.date, options.file);
-  const tasks = extractDidaTasks(markdown);
+  const tasks = extractDidaTasks(markdown, options.file);
   const from = date + "T00:00:00+08:00";
   const to = nextDate(date) + "T00:00:00+08:00";
 

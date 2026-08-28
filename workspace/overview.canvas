@@ -1,0 +1,11 @@
+{
+	"nodes":[
+		{"id":"overview-header","type":"text","x":0,"y":0,"width":1000,"height":100,"color":"6","text":"# Workspace Overview\n[[workspace/daily/index|Daily]] · [[workspace/tasks/index|Tasks]] · [[wiki/index|Wiki]] · [[wiki/sources/index|Sources]] · [[workspace/backlog|Backlog]]"},
+		{"id":"overview-calendar","type":"file","x":0,"y":120,"width":400,"height":760,"color":"5","file":"workspace/overview/calendar.md"},
+		{"id":"overview-today","type":"file","x":420,"y":120,"width":580,"height":350,"color":"4","file":"workspace/overview/today.md"},
+		{"id":"overview-todo","type":"file","x":420,"y":490,"width":580,"height":390,"color":"2","file":"workspace/overview/todo.md"},
+		{"id":"overview-media","type":"file","x":0,"y":900,"width":500,"height":420,"color":"3","file":"workspace/overview/media.md"},
+		{"id":"overview-knowledge","type":"file","x":520,"y":900,"width":480,"height":420,"color":"6","file":"workspace/overview/knowledge.md"}
+	],
+	"edges":[]
+}

@@ -2,12 +2,12 @@
 type: schema
 schema: page-type
 page_type: daily
-updated: 2026-08-27
+updated: 2026-08-28
 ---
 
 # Daily
 
-Daily 是按日期保存的轻量 Workspace 工作记录，用来组织当天的大任务、小任务，并承接材料、Knowledge Candidates 和晚间专注汇总。它不是完整的项目管理系统，也不要求任务来自同一个外部系统。
+Daily 是按日期保存的轻量 Workspace 工作记录，用来组织当天的 Task occurrence、一次性小任务，并承接材料、Knowledge Candidates 和晚间专注汇总。跨日任务的身份与全局状态由 [[schema/page-types/task|Task Entity]] 保存。
 
 ## 路径
 
@@ -31,9 +31,9 @@ status: open
 
 ## 正文结构
 
-- `未闭环`：派生查询，只显示旧 Daily 中仍未闭环的大任务和小任务，不复制原任务。
-- `大任务`：当天需要集中推进的事项，默认以 `1. 高优先级` 和 `2. 低优先级` 两个三级标题分组，组内仍按书写顺序表达先后。
-- `小任务`：当天可以穿插处理的事项。
+- `任务池`：只读显示当前 Task Entity，供晨间选择；不把全部活跃任务自动排入今天。
+- `大任务`：当天需要集中推进的 occurrence，默认以 `1. 高优先级` 和 `2. 低优先级` 两个三级标题分组，组内仍按书写顺序表达先后。
+- `小任务`：当天可以穿插处理的一次性事项；已知会跨日的任务仍应链接 Task Entity。
 - `产生的材料`：当天形成或引用的 Workspace 材料；引用可选，随手捕获可写入 `碎碎念` 三级标题。
 - `Knowledge Candidates`：值得后续人工选择 compile 的候选。
 - `专注`：`/daily-review` 生成的 DIDA 关联任务当日专注汇总。
@@ -41,7 +41,7 @@ status: open
 
 不设置“过程中”栏目。与某项任务直接相关的进展、阻塞或产出可以缩进写在该任务下；需要独立检索或复用时再建立单独页面并链接。
 
-`未闭环` 查询必须同时纳入 `大任务`、`小任务` 和两个优先级子标题下的 task。Markdown 标题保留 `1. 高优先级` / `2. 低优先级`，但 Obsidian 提供给 Dataview 的 `meta(section).subpath` 会规范化为 `1 高优先级` / `2 低优先级`；查询必须使用后者。
+Task occurrence 使用完整路径 wikilink 连接实体，例如 `[[workspace/tasks/TASK-202608-001|任务标题]]`；同一任务在不同日期可以安排不同切片。Markdown 标题继续保留 `1. 高优先级` / `2. 低优先级`，Obsidian 提供给 Dataview 的 `meta(section).subpath` 会规范化为 `1 高优先级` / `2 低优先级`。
 
 ## Markdown task 状态
 
@@ -49,17 +49,17 @@ status: open
 |---|---|
 | `[ ]` | 今天尚未开始 |
 | `[/]` | 今天正在进行 |
-| `[>]` | 今天未闭环，顺延到以后 |
+| `[>]` | 今天的 occurrence 已交接给 Task Entity，以后继续 |
 | `[x]` | 今天计划完成的切片已经完成 |
 | `[-]` | 今天取消 |
 
-Checkbox 表示“这项任务在今天的切片”，不表示外部 DIDA 任务整体是否完成。`[/]` 和 `[>]` 继续参加未闭环查询；`[x]` 和 `[-]` 不参加。
+Checkbox 表示“这项任务在今天的切片”，不表示 Task Entity 或外部 DIDA 任务整体是否完成。Daily 完成晚间复盘后，`大任务`、`小任务` 中不得残留 `[ ]` 或 `[/]`：当天完成用 `[x]`，取消用 `[-]`，以后继续则先建立或确认 Task Entity，再用 `[>]`。
 
 ## DIDA 关联
 
 - DIDA 不是唯一任务来源；没有 DIDA 链接的本地事项完全合法。
-- 用户按需把真实 DIDA Webapp 链接手工写入 `大任务` 或 `小任务`。
-- `/daily-review` 只为这两个栏目中已关联的 DIDA 任务生成当天专注汇总。
+- 稳定 DIDA 映射优先保存在 Task Entity；一次性或尚未提升的事项仍可在 Daily 中保留直接 DIDA Webapp 链接。
+- `/daily-review` 同时解析 occurrence 指向的 Task Entity 和 Daily 中的兼容性直接链接，按 DIDA task ID 去重生成当天专注汇总。
 - DIDA 的任务状态不得自动覆盖 Daily Checkbox。
 - `专注` 中的生成内容必须限制在 `<!-- dida-focus:start -->` 与 `<!-- dida-focus:end -->` 之间。
 

@@ -1,7 +1,7 @@
 ---
 type: schema
 schema: ownership
-updated: 2026-08-26
+updated: 2026-08-28
 ---
 
 # 目录所有权
@@ -31,7 +31,7 @@ updated: 2026-08-26
 
 ## Workspace 层
 
-- `workspace/` 保存会话摘要、计划、草稿、迁移清单和待办等持续变化的工作状态。
+- `workspace/` 保存会话摘要、Daily、Task Entity、计划、草稿、迁移清单和待办等持续变化的工作状态。
 - Agent 只在用户请求或已触发的本地 Skill 范围内修改 Workspace 内容。
 - Workspace 内容不是长期知识结论；其中有复用价值的内容应经过 compile 后进入 Wiki。
 

@@ -1,7 +1,7 @@
 ---
 type: schema
 schema: properties
-updated: 2026-08-26
+updated: 2026-08-28
 ---
 
 # Properties 规范
@@ -76,6 +76,29 @@ raw_sources:
 - `weread_source` 只用于 Reading Note，并链接实际 WeRead Raw。
 - `rating` 始终表示用户评分，采用 `0`～`10` 数值；平台评分继续保留在 Douban Raw 的 `score`。
 - Reading Note 的 `medium` 可取 `weread`、`print`、`other` 或 `unknown`；不得仅凭没有 WeRead 文件就推断为纸质书。
+
+### Task Entity
+
+```yaml
+---
+type: task
+task_id: TASK-202608-001
+title: 示例任务
+status: active
+priority: normal
+created: 2026-08-28
+updated: 2026-08-28
+due:
+dida_project_id:
+dida_task_id:
+dida_url:
+---
+```
+
+- `task_id` 是 Vault 内部身份，必须与文件名一致并且永不复用。
+- `status` 取值为 `inbox`、`active`、`blocked`、`done` 或 `cancelled`；`priority` 取值为 `high`、`normal` 或 `low`。
+- `due`、`closed` 和 DIDA 映射均为可选字段；DIDA 映射不得覆盖本地身份或状态。
+- 完整生命周期与 occurrence 语法见 [[schema/page-types/task|Task Entity]]。
 
 ### Daily
 

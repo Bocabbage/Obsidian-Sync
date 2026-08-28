@@ -1,15 +1,16 @@
 ---
 type: implementation-spec
 status: agreed
-implementation_status: in-progress
+implementation_status: complete
 phase_1_status: complete
 phase_2_status: complete
 phase_3_status: complete
 phase_4_status: complete
 phase_5_status: complete
+phase_6_status: complete
 version: 1
 created: 2026-08-25
-updated: 2026-08-26
+updated: 2026-08-27
 ---
 
 # Knowledge System v1
@@ -22,7 +23,7 @@ updated: 2026-08-26
 2. 以 Douban Raw 为唯一媒体目录，并将 WeRead、人工阅读和观影内容作为分支连接。
 3. `legacy-读书/` 与 `legacy-电影/` 的可验证拆分和退役。
 4. 直接消费 Raw 与稳定人工字段的书籍、电影和剧集卡片。
-5. 汇聚 Daily、来源新增、阅读观看状态和 Wiki 更新的 Canvas 首页。
+5. 汇聚 Daily、来源新增、阅读观看状态和 Wiki 更新的 Homepage，并保留 Canvas 视觉布局。
 
 本 Spec 固化目标、顺序、边界和决策；各 Phase 是否已经实现以文件头状态和对应验收记录为准。
 
@@ -43,7 +44,7 @@ Daily v2
   → Legacy 验证与拆分
   → Douban 卡片视图
   → Legacy 退役
-  → Canvas 首页
+  → Homepage / Canvas 首页
 ```
 
 后一个阶段依赖前一个阶段提供的真实字段和路径。实际实施时，Phase 2 审计发现两个 Root Legacy 目录规模有限，因此在同一轮内连续完成 Phase 2～5，并在每个内部检查点后再进入下一步。
@@ -197,37 +198,42 @@ Douban 电影 / 剧集 Raw（目录锚点）
 - 旧 Dataview 卡片、模板、空壳作者/导演页和 AI 演示不进入新结构。
 - `reading-maintenance` 已从迁移保护 Skill 重写为正式目录维护 Skill。
 
-## 9. Phase 6：Canvas 首页
+## 9. Phase 6：Homepage / Canvas 首页
 
 ### 位置与职责
 
-推荐放置于：
+稳定入口与视觉布局分别放置于：
 
 ```text
+workspace/overview/home.md
 workspace/overview.canvas
 ```
 
-Canvas 只负责布局、入口和状态概览，不直接保存任务、书目或知识事实。
+Markdown Homepage 负责可靠自动启动，Canvas 负责可缩放的视觉布局；两者只提供入口和状态概览，不直接保存任务、书目或知识事实。
 
-### 第一版区域
+### 第一版实现
 
-- 今天的 Daily 与未完成任务。
-- 最近新增的 Douban / WeRead Raw。
-- 当前阅读、最近阅读、最近观看。
-- 最近编译或更新的 Wiki 页面。
-- Legacy 迁移进度。
-- Workspace、Sources 和各 Wiki 领域入口。
+- `workspace/overview/calendar.md`：当前月份、Daily 状态和未闭环数量。
+- `workspace/overview/today.md`：当天 Daily、完成数量和任务切片。
+- `workspace/overview/media.md`：Douban Books、Movies、Series 入口和最近记录。
+- `workspace/overview/todo.md`：旧 Daily 未闭环与 Knowledge System Backlog；预留 Inbox、Upcoming、Overdue 和 Projects。
+- `workspace/overview/knowledge.md`：Knowledge Candidates 与最近 Wiki 更新。
+- `workspace/overview/_views/homepage/view.js`：上述组件共用的 DataviewJS；`.obsidian/snippets/homepage.css` 提供稳定展示层。
 
-动态内容由 Markdown、Bases 或 Dataview 页面提供，Canvas 负责引用或打开这些页面。
+`home.md` 与 Canvas 共用同一组组件。动态内容由 Markdown、Properties 和 Dataview 提供，入口页面只负责组合或引用。
 
 ### 启动方式
 
-本地已经启用 Canvas、Workspaces、Daily Notes 和 Bases。正式实施时二选一：
+已安装并启用 Homepage 4.4.4，启动目标为 `workspace/overview/home` 的 Reading view，使用 `Replace last note` 保留其他标签。插件配置由 OneDrive 管理，不进入 Git，也不通过手工改写 `.obsidian/workspace*.json` 实现首页。
 
-1. 使用核心 Workspaces 和 Obsidian 的状态恢复。
-2. 经用户确认后安装专门的 Homepage 插件，将 Canvas 或首页笔记设置为启动页。
+本机测试发现，Canvas 作为自动启动目标时会在嵌入查询初始化前恢复节点框，出现空白卡片；因此将 Canvas 保留为手动视觉入口，而非自动启动依赖。
 
-不通过手工改写 `.obsidian/workspace*.json` 实现首页。
+### 当前验收
+
+- Canvas JSON、DataviewJS 语法和组件内部路径已通过静态检查。
+- 本机 Obsidian 1.12.7 满足 Homepage 4.4.4 的最低版本 1.12.2。
+- 已通过冷重载验证自动进入 `workspace/overview/home.md` Reading view；查询会等待 Dataview 索引就绪，Calendar、Today、Todo、Media、Knowledge 五个面板均正常生成，未产生 Homepage / Dataview 运行错误。
+- Phase 6 已完成；Canvas 直接启动复测作为非阻塞后续事项保留在 Backlog。
 
 ## 10. 开工前必须确认
 
@@ -254,9 +260,9 @@ Canvas 只负责布局、入口和状态概览，不直接保存任务、书目�
 
 ### Canvas 前
 
-- Canvas 主要面向工作日启动还是全知识库导航。
-- 首页采用核心 Workspaces 还是安装 Homepage 插件。
-- “最近新增”的时间窗口和各区域默认显示数量。
+- 已确认：Canvas 主要面向工作日启动，知识库入口作为次级导航。
+- 已确认：Homepage 插件直接打开 `workspace/overview/home.md`；Canvas 为手动视觉布局，核心 Workspaces 不作为启动依赖。
+- 已确认：Calendar 使用当前月；Media 最近记录默认 6 项；任务列表默认显示 7～8 项并链接完整入口。
 
 ## 11. Schema 提升规则
 
