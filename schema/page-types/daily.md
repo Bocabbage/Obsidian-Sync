@@ -7,7 +7,7 @@ updated: 2026-08-28
 
 # Daily
 
-Daily 是按日期保存的轻量 Workspace 工作记录，用来组织当天的 Task occurrence、一次性小任务，并承接材料、Knowledge Candidates 和晚间专注汇总。跨日任务的身份与全局状态由 [[schema/page-types/task|Task Entity]] 保存。
+Daily 是按日期保存的轻量 Workspace 工作记录，用来组织跨日任务的当日 occurrence、一次性当日任务，并承接材料、Knowledge Candidates 和晚间专注汇总。跨日任务的身份与全局状态由 [[schema/page-types/task|Task Entity]] 保存。
 
 ## 路径
 
@@ -31,9 +31,9 @@ status: open
 
 ## 正文结构
 
-- `任务池`：只读显示当前 Task Entity，供晨间选择；不把全部活跃任务自动排入今天。
-- `大任务`：当天需要集中推进的 occurrence，默认以 `1. 高优先级` 和 `2. 低优先级` 两个三级标题分组，组内仍按书写顺序表达先后。
-- `小任务`：当天可以穿插处理的一次性事项；已知会跨日的任务仍应链接 Task Entity。
+- `任务池`：只读显示截至本页 `date` 尚未全局闭环的 Task Entity，供晨间选择；以 Task 的 `created` / `closed` 做日期截面筛选，不使用当前 `status` 过滤，也不把任务自动排入今天。表中的“当前状态”仅表示现在的状态。
+- `跨日任务`：当天需要推进且由 Task Entity 承接的 occurrence，默认以 `1. 高优先级` 和 `2. 低优先级` 两个三级标题分组，组内仍按书写顺序表达先后。
+- `当日任务`：不需要 Task Entity、预期在当天收口的一次性事项；一旦决定以后继续，必须提升为 Task Entity 并移交到跨日模型。
 - `产生的材料`：当天形成或引用的 Workspace 材料；引用可选，随手捕获可写入 `碎碎念` 三级标题。
 - `Knowledge Candidates`：值得后续人工选择 compile 的候选。
 - `专注`：`/daily-review` 生成的 DIDA 关联任务当日专注汇总。
@@ -53,7 +53,7 @@ Task occurrence 使用完整路径 wikilink 连接实体，例如 `[[workspace/t
 | `[x]` | 今天计划完成的切片已经完成 |
 | `[-]` | 今天取消 |
 
-Checkbox 表示“这项任务在今天的切片”，不表示 Task Entity 或外部 DIDA 任务整体是否完成。Daily 完成晚间复盘后，`大任务`、`小任务` 中不得残留 `[ ]` 或 `[/]`：当天完成用 `[x]`，取消用 `[-]`，以后继续则先建立或确认 Task Entity，再用 `[>]`。
+Checkbox 表示“这项任务在今天的切片”，不表示 Task Entity 或外部 DIDA 任务整体是否完成。Daily 完成晚间复盘后，`跨日任务`、`当日任务` 中不得残留 `[ ]` 或 `[/]`：当天完成用 `[x]`，取消用 `[-]`，以后继续则先建立或确认 Task Entity，再用 `[>]`。
 
 ## DIDA 关联
 

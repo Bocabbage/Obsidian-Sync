@@ -6,7 +6,7 @@ updated: 2026-08-28
 
 # Tasks
 
-Task Entity 保存跨日任务的本地身份和全局状态；Daily 保存每天实际计划与推进的 occurrence。一次性小任务继续只写 Daily。
+Task Entity 保存跨日任务的本地身份和全局状态；Daily 的“跨日任务”保存每天实际计划与推进的 occurrence，“当日任务”保存无需独立建页的一次性事项。
 
 ## 活跃任务
 

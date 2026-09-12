@@ -67,7 +67,7 @@
 
 - 会话摘要写入 `workspace/sessions/{年份}/YYYY-MM/`。
 - Daily 写入 `workspace/daily/{年份}/YYYY-MM/`；Quarterly Plan 继续写入 `workspace/plans/`，旧计划留在 Archived，不自动迁回。
-- 跨日、需统计或带稳定外部映射的任务写入 `workspace/tasks/`；Daily 只保存当天 occurrence，一次性小任务不强制建页。
+- 跨日、需统计或带稳定外部映射的任务写入 `workspace/tasks/`；Daily 的“跨日任务”只保存当天 occurrence，“当日任务”不强制建页。
 - Reading Note 写入 `workspace/reading/books/`，Viewing Note 写入 `workspace/viewing/`；两者都只在确有人工内容时按需建立。
 - DIDA 是 Task Entity 或 Daily 的可选外部映射与专注来源；不自动拉取今日任务，也不使用 DIDA 整体状态覆盖本地 Task 或当天 Checkbox。
 - 一次性迁移进度写入 `workspace/migrations/`，后续事项写入 `workspace/backlog.md`。

@@ -65,9 +65,9 @@ Daily 不再只是 `workspace/plans/` 下的任务表，而是一类独立的 Wo
 
 ### 页面内容
 
-- Morning：大任务、小任务，以及用户按需手工加入的 DIDA 任务链接；DIDA 不是唯一来源。
+- Morning：跨日任务、当日任务，以及用户按需手工加入的 DIDA 任务链接；DIDA 不是唯一来源。
 - During：直接更新当天任务切片的 Checkbox；任务相关进展写在任务下，独立产出写入“产生的材料”，不建立单独的“过程中”栏目。
-- Evening：`/daily-review` 只为大任务、小任务中已关联的 DIDA 任务生成当天番茄钟与正计时，并保留人工收尾。
+- Evening：`/daily-review` 只为跨日任务、当日任务中已关联的 DIDA 任务生成当天番茄钟与正计时，并保留人工收尾。
 - Knowledge Candidates：值得后续 compile 的概念、来源或问题。
 - 未闭环：通过查询显示旧 Daily 中的未完成切片，默认不复制到下一天。
 
@@ -78,7 +78,7 @@ Daily 不再只是 `workspace/plans/` 下的任务表，而是一类独立的 Wo
 - Knowledge Candidate 只是候选，不因写入 Daily 自动成为 Wiki 事实。
 - 晨间和晚间更新同一文件，不分别建立 morning/review 文件。
 - Daily Checkbox 表示当天计划完成的切片，不表示 DIDA 整体任务状态；DIDA 状态不得自动覆盖 Checkbox。
-- DIDA 链接由用户手工加入大任务或小任务；`/daily-review` 只读 focus 明细，使用 `tasks[].taskId` 匹配并按实际毫秒时长换算。
+- DIDA 链接由用户手工加入跨日任务或当日任务；`/daily-review` 只读 focus 明细，使用 `tasks[].taskId` 匹配并按实际毫秒时长换算。
 
 ### 已提升到 Schema 的内容
 
@@ -90,7 +90,7 @@ Daily 不再只是 `workspace/plans/` 下的任务表，而是一类独立的 Wo
 ### 验收
 
 - 已验证：`workspace/daily/2026/2026-08/2026-08-25.daily.md` 按正式模板创建，并由晚间 focus 聚合生成区刷新为 `closed`。
-- 已验证：未完成的大任务、小任务由 Dataview `TASK` 查询，模板和 Skill 均不自动复制任务。
+- 已验证：未完成的跨日任务、当日任务由 Dataview `TASK` 查询，模板和 Skill 均不自动复制任务。
 - 已验证：Knowledge Candidates 在 Daily 总览中单独汇总，compile 仍要求用户明确选择。
 - 已验证：测试 DIDA 任务当天聚合为 9 个番茄、3h45m；结果与独立 CLI/JQ 聚合的 9 条记录、13500000 毫秒一致。
 
@@ -243,7 +243,7 @@ Markdown Homepage 负责可靠自动启动，Canvas 负责可缩放的视觉布�
 - 已确认：行动项使用 Markdown task，表格不作为任务事实源。
 - 已确认：未完成任务通过查询显示；当天继续时由用户重新描述切片或再次引用，默认不自动复制。
 - 已确认：Knowledge Candidates 必须由用户明确选择后才能 compile。
-- 已确认：保留大任务、小任务；DIDA 链接由用户早上按需手工加入，晚间只生成关联任务当天的专注计时。
+- 已确认：使用跨日任务、当日任务；DIDA 链接由用户早上按需手工加入，晚间只生成关联任务当天的专注计时。
 
 ### Phase 2 前
 

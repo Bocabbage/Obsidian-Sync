@@ -7,7 +7,7 @@ updated: 2026-08-28
 
 # Daily Workflow
 
-Daily 在同一文件中完成晨间组织、日间状态更新和晚间复盘。Task Entity 保存跨日承诺，Daily occurrence 保存当天切片，一次性小任务继续只存在于 Daily。
+Daily 在同一文件中完成晨间组织、日间状态更新和晚间复盘。Task Entity 保存跨日承诺，`跨日任务` 保存其当天 occurrence，`当日任务` 保存无需建页的一次性事项。
 
 ## 晨间创建
 
@@ -18,8 +18,8 @@ Daily 在同一文件中完成晨间组织、日间状态更新和晚间复盘�
    ```
 
 2. 文件不存在时使用 `schema/templates/daily-template.md` 创建；已存在时打开或追加，不覆盖人工内容。
-3. `任务池` 只读显示 `workspace/tasks/` 中的活跃实体；用户选择今天实际推进的事项，在 `大任务` 或 `小任务` 中建立带 Task wikilink 的 occurrence。
-4. 当日即可完成的一次性小任务直接写成普通 Checkbox，不必建立 Task Entity。
+3. `任务池` 只读显示截至本页日期尚未全局闭环的实体：`created <= Daily.date` 且 `closed` 为空或晚于 Daily.date。不得按 Task 的当前 `status` 过滤，否则后来闭环会从历史 Daily 消失；用户选择今天实际推进的事项，在 `跨日任务` 中建立带 Task wikilink 的 occurrence。
+4. 当日即可完成的一次性事项在 `当日任务` 中直接写成普通 Checkbox，不必建立 Task Entity。
 5. 不自动拉取 DIDA 今日任务，不自动把全部活跃 Task 排入今天，也不复制旧 Daily 的未完成任务。
 
 同一 Task 在多日出现时重复引用同一个 Task Entity，并按当天目标重新描述切片。Task Entity 的 `priority` 是任务池全局优先级，Daily 的高低分组是当天安排；两者可以不同，不需要每天回写全局字段。
@@ -37,9 +37,9 @@ Daily 在同一文件中完成晨间组织、日间状态更新和晚间复盘�
 
 1. 定位当天 Daily；不存在时先从模板创建，不臆造任务。
 2. 根据用户报告把每个 `[ ]` / `[/]` occurrence 收口为：当天完成 `[x]`、取消 `[-]`，或以后继续 `[>]`。普通 inline task 只有先提升为 Task Entity 后才能使用 `[>]`。
-3. 若用户明确表示 Task 整体完成、取消或阻塞，同步更新对应 Task Entity；否则只改变 Daily occurrence。随后把 Task 页面当天时间线条目的摘要状态更新为完成、交接或取消。
+3. 若用户明确表示 Task 整体完成、取消或阻塞，同步更新对应 Task Entity；整体完成或取消时同时写入 `closed: YYYY-MM-DD`。否则只改变 Daily occurrence。随后把 Task 页面当天时间线条目的摘要状态更新为完成、交接或取消。
 4. 运行 `daily-review-check.mjs`；仍有 `[ ]` / `[/]` 或无 Task 归属的顶层 `[>]` 时停止关闭并请求用户决定。
-5. 从 `大任务`、`小任务` 中提取 Task wikilink，读取实体上的 DIDA 映射；同时兼容 Daily 中的直接 DIDA Webapp 链接。
+5. 从 `跨日任务`、`当日任务` 中提取 Task wikilink，读取实体上的 DIDA 映射；同时兼容 Daily 中的直接 DIDA Webapp 链接。
 6. 以 Asia/Shanghai 当天 `00:00:00` 到次日 `00:00:00` 为只读查询窗口，分别读取 `pomodoro` 和 `timing`。
 7. 使用 focus 响应中的 `tasks[].taskId` 匹配关联任务，按 focus 记录 `id` 去重，并把实际返回的毫秒 `duration` 换算为可读时长。
 8. 同一 DIDA task ID 在多个 occurrence 或直接链接中重复出现时只聚合一次；没有 DIDA 映射的本地任务不生成自动时长。

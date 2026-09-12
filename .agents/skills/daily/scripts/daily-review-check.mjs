@@ -2,7 +2,7 @@
 
 import { readFileSync } from "node:fs";
 
-const SECTION_NAMES = new Set(["大任务", "小任务"]);
+const SECTION_NAMES = new Set(["跨日任务", "当日任务"]);
 const TASK_ENTITY_RE = /\[\[workspace\/tasks\/TASK-\d{6}-\d{3}(?:\|[^\]]+)?\]\]/;
 
 function usage() {

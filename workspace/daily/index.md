@@ -41,8 +41,8 @@ FROM "workspace/daily"
 WHERE file.frontmatter.status = "closed"
   AND (status = " " OR status = "/")
   AND (
-    meta(section).subpath = "大任务"
-    OR meta(section).subpath = "小任务"
+    meta(section).subpath = "跨日任务"
+    OR meta(section).subpath = "当日任务"
     OR meta(section).subpath = "1 高优先级"
     OR meta(section).subpath = "2 低优先级"
   )

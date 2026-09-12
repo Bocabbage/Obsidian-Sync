@@ -10,26 +10,27 @@ status: open
 
 ## 任务池
 
-> [[workspace/tasks/index|查看全部 Tasks]] · 只把今天实际推进的 Task 作为 occurrence 放入下方。
+> [[workspace/tasks/index|查看全部 Tasks]] · 截至本页日期仍未全局闭环的 Task；只把今天实际推进的 Task 作为 occurrence 放入“跨日任务”。
 
 ```dataview
 TABLE WITHOUT ID
   link(file.path, title) AS "任务",
   priority AS "优先级",
-  status AS "状态"
+  status AS "当前状态"
 FROM "workspace/tasks"
-WHERE type = "task" AND (status = "active" OR status = "blocked" OR status = "inbox")
+WHERE type = "task"
+  AND date(created) <= this.date
+  AND (!closed OR date(closed) > this.date)
 SORT choice(priority = "high", 1, choice(priority = "normal", 2, 3)) ASC, updated DESC
-LIMIT 8
 ```
 
-## 大任务
+## 跨日任务
 
 ### 1. 高优先级
 
 ### 2. 低优先级
 
-## 小任务
+## 当日任务
 
 ## 产生的材料
 

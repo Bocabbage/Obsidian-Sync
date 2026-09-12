@@ -10,7 +10,7 @@ const DIDA_URL_SINGLE_RE =
   /https:\/\/(?:www\.)?dida365\.com\/webapp\/#p\/([0-9a-f]{24})\/tasks\/([0-9a-f]{24})/i;
 const TASK_LINK_RE =
   /\[\[(workspace\/tasks\/TASK-\d{6}-\d{3})(?:\.md)?(?:#[^\]|]*)?(?:\|([^\]]+))?\]\]/g;
-const SECTION_NAMES = new Set(["大任务", "小任务"]);
+const SECTION_NAMES = new Set(["跨日任务", "当日任务"]);
 
 function usage() {
   return [

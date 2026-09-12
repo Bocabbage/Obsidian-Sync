@@ -8,8 +8,8 @@ const todayKey = today.format("YYYY-MM-DD");
 const dailyFolder = "workspace/daily";
 const taskFolder = "workspace/tasks";
 const taskSections = new Set([
-  "大任务",
-  "小任务",
+  "跨日任务",
+  "当日任务",
   "1 高优先级",
   "2 低优先级",
   "1. 高优先级",
@@ -107,6 +107,48 @@ function taskPages() {
     .pages(`"${taskFolder}"`)
     .where((page) => stringValue(page.type) === "task")
     .array();
+}
+
+function mediaConfigs() {
+  return [
+    { type: "book", label: "Books", icon: "📚", folder: "raws/Douban/book", path: "wiki/sources/books/index.md", note: "含 WeRead 分支" },
+    { type: "movie", label: "Movies", icon: "🎬", folder: "raws/Douban/movie", path: "wiki/sources/movies/index.md", note: "电影目录" },
+    { type: "teleplay", label: "Series", icon: "📺", folder: "raws/Douban/teleplay", path: "wiki/sources/series/index.md", note: "剧集目录" },
+  ];
+}
+
+function mediaCollections() {
+  return mediaConfigs().map((config) => {
+    const pages = dv
+      .pages(`"${config.folder}"`)
+      .where((page) => stringValue(page.type) === config.type)
+      .array();
+    return { config, pages };
+  });
+}
+
+function knowledgeCandidateItems() {
+  const items = [];
+  for (const page of dailyPages()) {
+    for (const task of asArray(page.file?.tasks)) {
+      if (isOpenTask(task) && taskSection(task) === "Knowledge Candidates") {
+        items.push({ task, path: page.file.path, date: page.date, label: dateKey(page.date) });
+      }
+    }
+  }
+  return items.sort((left, right) => dateNumber(right.date) - dateNumber(left.date));
+}
+
+function wikiPages() {
+  return dv
+    .pages('"wiki"')
+    .where((page) => {
+      const path = page.file?.path || "";
+      const name = page.file?.name || "";
+      return name !== "AGENTS" && name !== "index" && !path.includes("/_meta/") && !path.includes("/_assets/");
+    })
+    .array()
+    .sort((left, right) => dateNumber(right.file?.mtime) - dateNumber(left.file?.mtime));
 }
 
 function taskPriorityNumber(page) {
@@ -259,7 +301,8 @@ function renderCalendar() {
   linkRow(links);
 }
 
-function renderToday() {
+function renderToday(options = {}) {
+  const compact = Boolean(options.compact);
   const path = dailyPath(todayKey);
   const page = dailyPages().find((item) => dateKey(item.date) === todayKey);
 
@@ -293,7 +336,7 @@ function renderToday() {
   root.appendChild(metrics);
 
   sectionTitle("今天的任务切片");
-  renderTaskList(open.map((task) => ({ task, path, label: "Today" })), 7);
+  renderTaskList(open.map((task) => ({ task, path, label: "Today" })), compact ? 4 : 7);
   linkRow([
     { label: "打开今日 Daily", path },
     { label: "Tasks 总览", path: "workspace/tasks/index.md" },
@@ -301,20 +344,10 @@ function renderToday() {
 }
 
 function renderMedia() {
-  const configs = [
-    { type: "book", label: "Books", icon: "📚", folder: "raws/Douban/book", path: "wiki/sources/books/index.md", note: "含 WeRead 分支" },
-    { type: "movie", label: "Movies", icon: "🎬", folder: "raws/Douban/movie", path: "wiki/sources/movies/index.md", note: "电影目录" },
-    { type: "teleplay", label: "Series", icon: "📺", folder: "raws/Douban/teleplay", path: "wiki/sources/series/index.md", note: "剧集目录" },
-  ];
-
   const items = [];
   const cards = document.createElement("div");
   cards.className = "homepage-media-cards";
-  for (const config of configs) {
-    const pages = dv
-      .pages(`"${config.folder}"`)
-      .where((page) => stringValue(page.type) === config.type)
-      .array();
+  for (const { config, pages } of mediaCollections()) {
     pages.forEach((page) => items.push({ page, config }));
 
     const card = document.createElement("div");
@@ -356,28 +389,12 @@ function renderMedia() {
 }
 
 function renderKnowledge() {
-  const candidateItems = [];
-  for (const page of dailyPages()) {
-    for (const task of asArray(page.file?.tasks)) {
-      if (isOpenTask(task) && taskSection(task) === "Knowledge Candidates") {
-        candidateItems.push({ task, path: page.file.path, date: page.date, label: dateKey(page.date) });
-      }
-    }
-  }
-  candidateItems.sort((left, right) => dateNumber(right.date) - dateNumber(left.date));
+  const candidateItems = knowledgeCandidateItems();
 
   sectionTitle(`Knowledge Candidates · ${candidateItems.length}`);
   renderTaskList(candidateItems, 4);
 
-  const pages = dv
-    .pages('"wiki"')
-    .where((page) => {
-      const path = page.file?.path || "";
-      const name = page.file?.name || "";
-      return name !== "AGENTS" && name !== "index" && !path.includes("/_meta/") && !path.includes("/_assets/");
-    })
-    .array()
-    .sort((left, right) => dateNumber(right.file?.mtime) - dateNumber(left.file?.mtime));
+  const pages = wikiPages();
 
   sectionTitle("Wiki 最近更新");
   const recent = document.createElement("ul");
@@ -394,7 +411,8 @@ function renderKnowledge() {
   linkRow([{ label: "Wiki 首页", path: "wiki/index.md" }]);
 }
 
-function renderTodo() {
+function renderTodo(options = {}) {
+  const compact = Boolean(options.compact);
   const pages = taskPages();
   const active = pages.filter((page) => page.status === "active" || page.status === "blocked");
   const inbox = pages.filter((page) => page.status === "inbox");
@@ -413,7 +431,7 @@ function renderTodo() {
   root.appendChild(summary);
 
   sectionTitle("当前 Tasks");
-  renderTaskEntities(visible, 7);
+  renderTaskEntities(visible, compact ? 4 : 7);
 
   linkRow([
     { label: "Tasks 总览", path: "workspace/tasks/index.md" },
@@ -422,12 +440,153 @@ function renderTodo() {
   ]);
 }
 
+function activityItems() {
+  const media = mediaCollections()
+    .flatMap(({ config, pages }) => pages.map((page) => ({
+      kind: "Media",
+      icon: config.icon,
+      title: stringValue(page.title) || page.file.name,
+      path: page.file.path,
+      date: page.collectionDate || page.file?.mtime,
+    })))
+    .sort((left, right) => dateNumber(right.date) - dateNumber(left.date))
+    .slice(0, 2);
+
+  const knowledge = wikiPages().slice(0, 2).map((page) => ({
+    kind: "Wiki",
+    icon: "◇",
+    title: stringValue(page.title) || page.file.name,
+    path: page.file.path,
+    date: page.file?.mtime,
+  }));
+
+  const daily = dailyPages()
+    .sort((left, right) => dateNumber(right.date) - dateNumber(left.date))
+    .slice(0, 1)
+    .map((page) => ({
+      kind: "Daily",
+      icon: stringValue(page.status) === "closed" ? "✓" : "◐",
+      title: `${dateKey(page.date)} Daily`,
+      path: page.file.path,
+      date: page.date,
+    }));
+
+  return [...media, ...knowledge, ...daily]
+    .sort((left, right) => dateNumber(right.date) - dateNumber(left.date))
+    .slice(0, 5);
+}
+
+function renderActivity() {
+  const items = activityItems();
+  if (!items.length) {
+    emptyState("最近还没有可展示的活动。");
+  } else {
+    const list = document.createElement("ul");
+    list.className = "homepage-activity-list homepage-activity-feed";
+    for (const item of items) {
+      const row = document.createElement("li");
+      const icon = document.createElement("span");
+      icon.className = "homepage-activity-icon";
+      icon.textContent = item.icon;
+      row.appendChild(icon);
+      internalLink(row, item.title, item.path, "homepage-activity-title");
+      const meta = document.createElement("span");
+      meta.className = "homepage-activity-meta";
+      meta.textContent = `${item.kind} · ${dateKey(item.date)}`;
+      row.appendChild(meta);
+      list.appendChild(row);
+    }
+    root.appendChild(list);
+  }
+  linkRow([
+    { label: "Sources", path: "wiki/sources/index.md" },
+    { label: "Wiki", path: "wiki/index.md" },
+  ]);
+}
+
+function renderShortcuts() {
+  const grid = document.createElement("div");
+  grid.className = "homepage-shortcut-grid";
+  const collections = mediaCollections();
+  const candidates = knowledgeCandidateItems();
+  const wiki = wikiPages();
+  const shortcuts = [
+    ...collections.map(({ config, pages }) => ({
+      icon: config.icon,
+      label: config.label,
+      path: config.path,
+      value: pages.length,
+      note: config.note,
+    })),
+    { icon: "◇", label: "Wiki", path: "wiki/index.md", value: wiki.length, note: "compiled knowledge" },
+    {
+      icon: "✦",
+      label: "Candidates",
+      path: candidates[0] ? `${candidates[0].path}#Knowledge Candidates` : "workspace/daily/index.md",
+      value: candidates.length,
+      note: "待编译知识",
+    },
+  ];
+
+  for (const shortcut of shortcuts) {
+    const card = document.createElement("div");
+    card.className = "homepage-shortcut-card";
+    const icon = document.createElement("span");
+    icon.className = "homepage-shortcut-icon";
+    icon.textContent = shortcut.icon;
+    const body = document.createElement("span");
+    internalLink(body, shortcut.label, shortcut.path, "homepage-shortcut-link");
+    const note = document.createElement("small");
+    note.textContent = shortcut.note;
+    body.appendChild(note);
+    const value = document.createElement("strong");
+    value.textContent = String(shortcut.value);
+    card.append(icon, body, value);
+    grid.appendChild(card);
+  }
+  root.appendChild(grid);
+}
+
+function renderDashboardHero(dashboardRoot) {
+  const pages = dailyPages();
+  const todayPage = pages.find((page) => dateKey(page.date) === todayKey);
+  const activeTasks = taskPages().filter((page) => page.status === "active" || page.status === "blocked");
+  const hero = document.createElement("header");
+  hero.className = "homepage-dashboard-hero";
+
+  const title = document.createElement("div");
+  title.className = "homepage-dashboard-title";
+  const eyebrow = document.createElement("span");
+  eyebrow.textContent = "WORKSPACE";
+  const date = document.createElement("strong");
+  date.textContent = today.format("M 月 D 日 · dddd");
+  const status = document.createElement("small");
+  status.textContent = `${todayPage ? (stringValue(todayPage.status) === "closed" ? "Daily 已复盘" : "Daily 进行中") : "Daily 尚未创建"} · ${activeTasks.length} 个活跃 Task`;
+  title.append(eyebrow, date, status);
+
+  const actions = document.createElement("nav");
+  actions.className = "homepage-quick-actions";
+  const quickLinks = [
+    { label: "Today", path: todayPage?.file?.path || "workspace/daily/index.md" },
+    { label: "Tasks", path: "workspace/tasks/index.md" },
+    { label: "Books", path: "wiki/sources/books/index.md" },
+    { label: "Movies", path: "wiki/sources/movies/index.md" },
+    { label: "Wiki", path: "wiki/index.md" },
+    { label: "Canvas", path: "workspace/overview.canvas" },
+  ];
+  for (const link of quickLinks) internalLink(actions, link.label, link.path, "homepage-quick-link");
+  hero.append(title, actions);
+  dashboardRoot.appendChild(hero);
+}
+
 const renderers = {
   calendar: renderCalendar,
   today: renderToday,
   media: renderMedia,
   knowledge: renderKnowledge,
   todo: renderTodo,
+  activity: renderActivity,
+  shortcuts: renderShortcuts,
 };
 
 function requiredDataviewFolders() {
@@ -436,16 +595,16 @@ function requiredDataviewFolders() {
     : [];
   const requiredFolders = new Set();
 
-  if (["home", "calendar", "today", "knowledge"].includes(panel)) {
+  if (["home", "calendar", "today", "knowledge", "activity", "shortcuts"].includes(panel)) {
     requiredFolders.add(dailyFolder);
   }
   if (["home", "todo"].includes(panel)) requiredFolders.add(taskFolder);
-  if (["home", "media"].includes(panel)) {
+  if (["home", "media", "activity", "shortcuts"].includes(panel)) {
     requiredFolders.add("raws/Douban/book");
     requiredFolders.add("raws/Douban/movie");
     requiredFolders.add("raws/Douban/teleplay");
   }
-  if (["home", "knowledge"].includes(panel)) requiredFolders.add("wiki");
+  if (["home", "knowledge", "activity", "shortcuts"].includes(panel)) requiredFolders.add("wiki");
 
   return [...requiredFolders].filter((folder) =>
     markdownPaths.some((path) => path.startsWith(`${folder}/`))
@@ -466,16 +625,18 @@ function renderPanelView() {
     const dashboardRoot = root;
     dashboardRoot.classList.add("homepage-dashboard");
 
+    renderDashboardHero(dashboardRoot);
+
     const grid = document.createElement("div");
     grid.className = "homepage-dashboard-grid";
     dashboardRoot.appendChild(grid);
 
     const panelConfigs = [
-      { panel: "calendar", title: "Calendar" },
-      { panel: "today", title: "Today" },
-      { panel: "todo", title: "Todo" },
-      { panel: "media", title: "Media" },
-      { panel: "knowledge", title: "Knowledge" },
+      { panel: "today", title: "Today", options: { compact: true } },
+      { panel: "calendar", title: "Calendar", options: { compact: true } },
+      { panel: "todo", title: "Tasks", options: { compact: true } },
+      { panel: "activity", title: "Recent Activity" },
+      { panel: "shortcuts", title: "Explore" },
     ];
 
     for (const config of panelConfigs) {
@@ -487,7 +648,7 @@ function renderPanelView() {
       grid.appendChild(card);
 
       root = card;
-      renderers[config.panel]();
+      renderers[config.panel](config.options || {});
     }
     root = dashboardRoot;
   } else {

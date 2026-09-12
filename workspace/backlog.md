@@ -25,6 +25,7 @@ updated: 2026-08-28
 
 - [x] 建立 `workspace/overview.canvas` 第一版，聚合 Calendar、Today、Media、Todo 与 Knowledge。
 - [x] 完成 Homepage 自动打开 Markdown Dashboard、Dataview 五面板渲染与无报错运行态验收。
+- [x] 完成 Homepage v2 首屏化：Today / Calendar、Tasks / Recent Activity 与紧凑 Explore 分层展示。
 - [ ] Obsidian 或 Homepage 升级后复测 Canvas 直接启动；当前版本因嵌入节点初始化时序问题保留为手动视觉入口。
 - [x] 建立 `workspace/tasks/` Task Entity、Daily occurrence 与 DIDA 映射边界，并由 Tasks 接管 Homepage Todo 数据源。
 

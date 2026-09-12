@@ -42,7 +42,7 @@ dida_url:
 - `status` 取值为 `inbox`、`active`、`blocked`、`done` 或 `cancelled`。
 - `priority` 取值为 `high`、`normal` 或 `low`，表示任务池中的全局优先级；Daily 的高低分组只表示当天排序，两者无需强制一致。
 - `due` 可选，只在存在真实截止日期时填写 `YYYY-MM-DD`。
-- 任务进入 `done` 或 `cancelled` 时可以增加 `closed: YYYY-MM-DD`。
+- 任务进入 `done` 或 `cancelled` 时必须增加 `closed: YYYY-MM-DD`；Daily 任务池以该日期保留历史时点上的未闭环任务。
 - DIDA 字段可选；存在关联时同时保存 project ID、task ID 和稳定 Webapp URL。其他外部系统以后使用独立适配字段，不复用 `task_id`。
 
 ## 何时建立 Task Entity
@@ -55,7 +55,7 @@ dida_url:
 - 当日 inline task 未完成，并且用户决定以后继续；
 - 需要独立记录目标、阻塞、下一步或任务级结论。
 
-当日即可完成、无需独立统计的一次性小任务继续只写在 Daily，不创建空壳页面。
+当日即可完成、无需独立统计的一次性事项继续只写在 Daily 的“当日任务”，不创建空壳页面。
 
 ## Daily occurrence
 
