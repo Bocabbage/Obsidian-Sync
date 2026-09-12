@@ -33,8 +33,9 @@ if (!config) throw new Error(`Unsupported Douban catalog type: ${mediaType}`);
 const root = dv.container;
 root.classList.add("douban-catalog");
 const vault = dv.app?.vault || app.vault;
+const catalogAssetFolder = "raws/Douban/_assets";
 const catalogAssets = typeof vault.getFiles === "function"
-  ? vault.getFiles().filter((file) => file.path.startsWith("assets/"))
+  ? vault.getFiles().filter((file) => file.path.startsWith(`${catalogAssetFolder}/`))
   : [];
 
 function asArray(value) {
@@ -128,7 +129,7 @@ function addBadge(parent, text, kind = "") {
 async function coverUrl(page) {
   const extensions = mediaType === "book" ? ["jpg", "webp", "png"] : ["webp", "jpg", "png"];
   for (const extension of extensions) {
-    const path = `assets/${page.file.name}.${extension}`;
+    const path = `${catalogAssetFolder}/${page.file.name}.${extension}`;
     const file = vault.getAbstractFileByPath(path);
     if (file) return vault.getResourcePath(file);
   }
@@ -136,7 +137,7 @@ async function coverUrl(page) {
   const rawFile = vault.getAbstractFileByPath(page.file.path);
   if (rawFile && typeof vault.cachedRead === "function") {
     const source = await vault.cachedRead(rawFile);
-    const match = source.match(/!\[[^\]]*\]\(<?(assets\/[^)>\n]+)>?\)/i);
+    const match = source.match(/!\[[^\]]*\]\(<?(raws\/Douban\/_assets\/[^)>\n]+)>?\)/i);
     const referenced = match?.[1]?.trim();
     const file = referenced ? vault.getAbstractFileByPath(referenced) : null;
     if (file) return vault.getResourcePath(file);

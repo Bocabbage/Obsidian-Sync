@@ -1,7 +1,7 @@
 ---
 type: schema
 schema: version-control
-updated: 2026-08-28
+updated: 2026-09-12
 ---
 
 # Git 与 OneDrive
@@ -22,6 +22,7 @@ updated: 2026-08-28
 | 系统设计 | `workspace/specs/`、`workspace/migrations/`、Workspace 路由与占位 README |
 | Daily 视图 | `workspace/daily/index.md`；具体每日记录仍由 OneDrive 管理 |
 | Task 视图 | `workspace/tasks/index.md`；具体 Task Entity 仍由 OneDrive 管理 |
+| Workspace 新模型入口 | `workspace/themes/index.md`、`workspace/insights/index.md`、`workspace/plans/index.md`、`workspace/sessions/index.md`；具体正文仍由 OneDrive 管理 |
 | Homepage 视图 | `workspace/overview.canvas` 与 `workspace/overview/` 下的可复现查询组件 |
 | Wiki 骨架 | Wiki 根/领域 `AGENTS.md`、`index.md`、来源入口、可复现来源视图代码和附件说明 |
 | 可复现视图 | 明确列入白名单的根视图入口 |
@@ -29,9 +30,9 @@ updated: 2026-08-28
 
 ## OneDrive-only 内容
 
-- `raws/`、根 `assets/`、`archived/` 和 `.trash/`。
+- `raws/`（包含来源附件）、`archived/` 和 `.trash/`。
 - Root Legacy 正文和附件、`wiki/**/legacy-*`。
-- Workspace 的具体 Daily、Task Entity、Quarterly、Sessions、Reading / Viewing Note、草稿正文和附件；白名单中的入口 README、Daily 总览与 Tasks 总览除外。
+- Workspace 的具体 Daily、Task Entity、Theme、Insight Log、Period Plan、Sessions、Reading / Viewing Note、草稿正文和附件；白名单中的入口与总览除外。
 - 编译后的 Wiki 普通知识正文；Git 只跟踪它的 Agent/索引骨架。
 - `.obsidian/workspace*.json`、插件数据、主题文件、缓存和用户界面状态。
 - `.claude/settings.local.json` 及任何本地权限、令牌或个人连接配置。

@@ -16,7 +16,7 @@
 | 路径 | 角色 | 默认读取 | 默认写入 |
 |---|---|---:|---:|
 | `raws/` | 外部来源与同步数据 | 是 | 否 |
-| `assets/` | 当前为 Douban 封面缓存 | 按需 | 否 |
+| `raws/Douban/_assets/` | Douban 封面缓存 | 按需 | 否 |
 | `workspace/` | 会话、计划、草稿、迁移和待办 | 按需 | 是 |
 | `wiki/` | 人和 Agent 可读的 compiled knowledge | 是 | 是 |
 | `schema/` | 结构、字段、来源和工作流契约 | 是 | 谨慎 |
@@ -46,12 +46,15 @@
 | 迁移 Legacy | `schema/workflows/migrate-legacy.md` | `workspace/migrations/` + 目标层 |
 | 会话记录 | `schema/workflows/session.md` + `session-log` Skill | `workspace/sessions/` |
 | Daily / Task 创建与复盘 | `schema/workflows/daily.md` + `daily` Skill | `workspace/daily/`、`workspace/tasks/` |
+| 零碎记录分流 | `schema/workflows/knowledge-intake.md` | `workspace/themes/`、`workspace/insights/`、Wiki |
+| 周/月/季度计划复盘 | `schema/workflows/periodic-review.md` + 对应 Skill | `workspace/plans/` |
 | 书籍与影视目录 | `schema/workflows/media-catalog.md` + source adapters | `wiki/sources/*/index.md` |
 | Homepage / Canvas | `schema/workflows/homepage.md` + `schema/views.md` | `workspace/overview/home.md` + `workspace/overview.canvas` |
 
 ## Raw 与来源
 
-- `raws/Douban/`、`raws/WeRead/` 和根 `assets/` 由同步插件维护，Agent 默认不得手工改写。
+- `raws/Douban/`、`raws/Douban/_assets/` 和 `raws/WeRead/` 由同步插件维护，Agent 默认不得手工改写。
+- Web 剪藏按 `raws/Web/{年份}/YYYY-MM/` 保存，日期负责分片，来源标签只作宽松元数据；领域与 Theme 判断不回写 Raw。
 - 不在插件文件中增加跨来源链接；Douban 与 WeRead 的自动关系由目录视图推导，例外覆盖写入 `wiki/sources/link-overrides/`。
 - 书籍匹配优先使用 ISBN，标题相似不得直接合并；见 `schema/sources/identity-resolution.md`。
 - 需要调整同步模板、覆盖行为或附件路径时，先读取插件配置和官方文档，并将其视为单独配置任务。
@@ -66,7 +69,7 @@
 ## Workspace
 
 - 会话摘要写入 `workspace/sessions/{年份}/YYYY-MM/`。
-- Daily 写入 `workspace/daily/{年份}/YYYY-MM/`；Quarterly Plan 继续写入 `workspace/plans/`，旧计划留在 Archived，不自动迁回。
+- Daily 写入 `workspace/daily/{年份}/YYYY-MM/`；Theme、Insight 与周/月/季度计划分别写入 `workspace/themes/`、`workspace/insights/` 和 `workspace/plans/`。
 - 跨日、需统计或带稳定外部映射的任务写入 `workspace/tasks/`；Daily 的“跨日任务”只保存当天 occurrence，“当日任务”不强制建页。
 - Reading Note 写入 `workspace/reading/books/`，Viewing Note 写入 `workspace/viewing/`；两者都只在确有人工内容时按需建立。
 - DIDA 是 Task Entity 或 Daily 的可选外部映射与专注来源；不自动拉取今日任务，也不使用 DIDA 整体状态覆盖本地 Task 或当天 Checkbox。
@@ -90,7 +93,7 @@ Minimal + CSS snippets = 展示层
 
 - 视图不是新的事实来源，详细规范见 `schema/views.md`。
 - 不直接修改主题原文件；样式调整放入 `.obsidian/snippets/`。
-- 当前根 `assets/` 不作普通共享附件目录使用；媒体目录可以只读展示其中的 Douban 封面。新 Wiki 附件放 `wiki/_assets/<domain>/`，Workspace 附件放 `workspace/_assets/`。
+- Douban 封面只读展示 `raws/Douban/_assets/`；新 Wiki 附件放 `wiki/_assets/<domain>/`，Workspace 附件放 `workspace/_assets/`。
 
 ## 文件操作与检查
 
@@ -103,7 +106,7 @@ Minimal + CSS snippets = 展示层
 ## Git 与同步
 
 - OneDrive 负责整个 Vault 的内容同步；Git 只保存 Agent 规则、Schema、Skills、系统 Spec、迁移控制、索引骨架、CSS snippets 和明确列入白名单的视图。
-- Raw、附件、日常记录、会话、普通 Wiki 正文、Legacy 和 Archived 不进入 Git；完整白名单见 `schema/version-control.md`。
+- Raw 与来源附件、日常记录、Theme/Insight/Plan 正文、会话、普通 Wiki 正文、Legacy 和 Archived 不进入 Git；完整白名单见 `schema/version-control.md`。
 - `.gitignore` 默认忽略所有 Vault 内容，不使用 `git add .` 绕过白名单。
 - 提交前检查 `git status` 和 staged diff，避开用户的历史删除、工作区状态、缓存和无关配置变化。
 - 不在用户未明确要求时 commit 或 push。

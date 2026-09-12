@@ -3,7 +3,7 @@ type: workspace-view
 view: homepage
 cssclasses:
   - homepage-dashboard-note
-updated: 2026-08-28
+updated: 2026-09-12
 ---
 
 ```dataviewjs

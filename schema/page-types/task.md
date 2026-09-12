@@ -2,7 +2,7 @@
 type: schema
 schema: page-type
 page_type: task
-updated: 2026-08-28
+updated: 2026-09-12
 ---
 
 # Task Entity
@@ -29,11 +29,12 @@ title: 示例任务
 status: active
 priority: normal
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-12
 due:
 dida_project_id:
 dida_task_id:
 dida_url:
+themes: []
 ---
 ```
 
@@ -44,6 +45,7 @@ dida_url:
 - `due` 可选，只在存在真实截止日期时填写 `YYYY-MM-DD`。
 - 任务进入 `done` 或 `cancelled` 时必须增加 `closed: YYYY-MM-DD`；Daily 任务池以该日期保留历史时点上的未闭环任务。
 - DIDA 字段可选；存在关联时同时保存 project ID、task ID 和稳定 Webapp URL。其他外部系统以后使用独立适配字段，不复用 `task_id`。
+- `themes` 可选，用于连接一个或多个持续关注主题；Task 状态仍独立于 Theme 和 Period Plan。
 
 ## 何时建立 Task Entity
 

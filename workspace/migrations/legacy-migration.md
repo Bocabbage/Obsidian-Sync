@@ -2,7 +2,7 @@
 type: migration
 status: active
 created: 2026-08-25
-updated: 2026-08-26
+updated: 2026-09-12
 ---
 
 # Legacy Migration
@@ -38,3 +38,5 @@ updated: 2026-08-26
 
 - 2026-08-25：将 `legacy-对话日志/` 整体移动到 `workspace/sessions/`，保留原年份、月份和文件名；同步更新 `session-log` Skill。
 - 2026-08-26：完成 Douban 唯一媒体目录、WeRead 分支、Reading / Viewing Note 和 Cinema Wiki 改造；迁移 4 个过程附件后，将 `legacy-读书/` 与 `legacy-电影/` 的剩余 37 个文件移动到 `.trash/knowledge-system-v1-2026-08-26/`。该快照可恢复，未永久删除。
+- 2026-09-12：复核发现唯一 Viewing Note《洛丽塔》只有迁移说明、空标题与语义不确定的旧评分，不构成实际人工观影内容；已将整个 `workspace/viewing/` 移入 `.trash/knowledge-intake-v2-2026-09-12/workspace/viewing/`。Viewing Note Schema 保留，未来有真实内容时按需重建目录。
+- 2026-09-12：Douban 插件封面缓存从根 `assets/` 迁至 `raws/Douban/_assets/`，并同步 169 个 Raw 引用、插件附件路径和目录视图。

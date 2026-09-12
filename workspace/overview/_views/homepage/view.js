@@ -7,6 +7,9 @@ const today = now.clone().startOf("day");
 const todayKey = today.format("YYYY-MM-DD");
 const dailyFolder = "workspace/daily";
 const taskFolder = "workspace/tasks";
+const themeFolder = "workspace/themes";
+const insightFolder = "workspace/insights";
+const planFolder = "workspace/plans";
 const taskSections = new Set([
   "跨日任务",
   "当日任务",
@@ -15,6 +18,7 @@ const taskSections = new Set([
   "1. 高优先级",
   "2. 低优先级",
 ]);
+const candidateSections = new Set(["待分流", "Knowledge Candidates"]);
 
 root.classList.add("homepage-panel", `homepage-panel-${panel}`);
 
@@ -36,6 +40,15 @@ function dateKey(value) {
   if (typeof value.toFormat === "function") return value.toFormat("yyyy-MM-dd");
   if (typeof value.format === "function") return value.format("YYYY-MM-DD");
   return String(value).slice(0, 10);
+}
+
+function periodText(page) {
+  const value = page.period;
+  if (page.period_type === "monthly") {
+    const key = dateKey(value);
+    if (/^\d{4}-\d{2}/.test(key)) return key.slice(0, 7);
+  }
+  return stringValue(value) || page.file.name;
 }
 
 function dateNumber(value) {
@@ -109,6 +122,27 @@ function taskPages() {
     .array();
 }
 
+function themePages() {
+  return dv
+    .pages(`"${themeFolder}"`)
+    .where((page) => stringValue(page.type) === "theme")
+    .array();
+}
+
+function insightPages() {
+  return dv
+    .pages(`"${insightFolder}"`)
+    .where((page) => stringValue(page.type) === "insight-log")
+    .array();
+}
+
+function periodPlanPages() {
+  return dv
+    .pages(`"${planFolder}"`)
+    .where((page) => stringValue(page.type) === "period-plan")
+    .array();
+}
+
 function mediaConfigs() {
   return [
     { type: "book", label: "Books", icon: "📚", folder: "raws/Douban/book", path: "wiki/sources/books/index.md", note: "含 WeRead 分支" },
@@ -130,9 +164,37 @@ function mediaCollections() {
 function knowledgeCandidateItems() {
   const items = [];
   for (const page of dailyPages()) {
-    for (const task of asArray(page.file?.tasks)) {
-      if (isOpenTask(task) && taskSection(task) === "Knowledge Candidates") {
-        items.push({ task, path: page.file.path, date: page.date, label: dateKey(page.date) });
+    for (const item of asArray(page.file?.lists)) {
+      const section = taskSection(item);
+      const text = stringValue(item.text).replace(/\s+/g, " ").trim();
+      const routed = text.includes("→ [[workspace/");
+      const isTopLevel = item.parent == null;
+      const isClosedTask = item.task && (item.completed || item.status === "-" || item.status === ">");
+      if (candidateSections.has(section) && isTopLevel && text && !routed && !isClosedTask) {
+        items.push({
+          task: item,
+          path: page.file.path,
+          anchor: section,
+          date: page.date,
+          label: dateKey(page.date),
+        });
+      }
+    }
+  }
+  return items.sort((left, right) => dateNumber(right.date) - dateNumber(left.date));
+}
+
+function insightItems() {
+  const items = [];
+  for (const page of insightPages()) {
+    for (const item of asArray(page.file?.lists)) {
+      const text = stringValue(item.text).replace(/\s+/g, " ").trim();
+      if (item.parent == null && text.startsWith("💡")) {
+        items.push({
+          title: text.replace(/^💡\s*/, ""),
+          path: page.file.path,
+          date: taskSection(item) || page.period,
+        });
       }
     }
   }
@@ -391,7 +453,7 @@ function renderMedia() {
 function renderKnowledge() {
   const candidateItems = knowledgeCandidateItems();
 
-  sectionTitle(`Knowledge Candidates · ${candidateItems.length}`);
+  sectionTitle(`待分流 · ${candidateItems.length}`);
   renderTaskList(candidateItems, 4);
 
   const pages = wikiPages();
@@ -504,6 +566,113 @@ function renderActivity() {
   ]);
 }
 
+function renderFocus() {
+  const themes = themePages()
+    .filter((page) => page.status === "active" || page.status === "seed")
+    .sort((left, right) => {
+      const statusOrder = (page) => page.status === "active" ? 0 : 1;
+      return statusOrder(left) - statusOrder(right) || dateNumber(right.updated) - dateNumber(left.updated);
+    });
+  const plans = periodPlanPages()
+    .filter((page) => page.status === "active" || page.status === "draft")
+    .sort((left, right) => dateNumber(right.starts) - dateNumber(left.starts));
+  const insights = insightItems();
+  const dueReviews = [...themes, ...plans].filter((page) => {
+    const due = dateKey(page.next_review);
+    return due && due <= todayKey;
+  }).length;
+
+  const summary = document.createElement("div");
+  summary.className = "homepage-focus-summary";
+  summary.innerHTML = `<span><strong>${themes.length}</strong> Themes</span><span><strong>${plans.length}</strong> Plans</span><span><strong>${dueReviews}</strong> 待复核</span>`;
+  root.appendChild(summary);
+
+  const grid = document.createElement("div");
+  grid.className = "homepage-focus-grid";
+  const groups = [
+    {
+      title: "Current Plans",
+      items: plans.slice(0, 3).map((page) => ({
+        icon: page.period_type === "weekly" ? "W" : page.period_type === "monthly" ? "M" : "Q",
+        title: periodText(page),
+        path: page.file.path,
+        meta: stringValue(page.status),
+      })),
+      empty: "暂无周期草案",
+    },
+    {
+      title: "Active Themes",
+      items: themes.slice(0, 3).map((page) => ({
+        icon: page.status === "active" ? "●" : "○",
+        title: stringValue(page.title) || page.file.name,
+        path: page.file.path,
+        meta: stringValue(page.status),
+      })),
+      empty: "暂无 Theme",
+    },
+    {
+      title: "Recent Insights",
+      items: insights.slice(0, 3).map((item) => ({
+        icon: "💡",
+        title: item.title,
+        path: item.path,
+        meta: dateKey(item.date) || stringValue(item.date),
+      })),
+      empty: "暂无 Insight",
+    },
+  ];
+
+  for (const group of groups) {
+    const column = document.createElement("section");
+    column.className = "homepage-focus-column";
+    const heading = document.createElement("h3");
+    heading.textContent = group.title;
+    column.appendChild(heading);
+
+    if (!group.items.length) {
+      const empty = document.createElement("span");
+      empty.className = "homepage-empty-inline";
+      empty.textContent = group.empty;
+      column.appendChild(empty);
+    } else {
+      const list = document.createElement("ul");
+      list.className = "homepage-activity-list";
+      for (const item of group.items) {
+        const row = document.createElement("li");
+        const icon = document.createElement("span");
+        icon.className = "homepage-activity-icon";
+        icon.textContent = item.icon;
+        row.appendChild(icon);
+        internalLink(row, item.title, item.path, "homepage-activity-title");
+        const meta = document.createElement("span");
+        meta.className = "homepage-activity-meta";
+        meta.textContent = item.meta;
+        row.appendChild(meta);
+        list.appendChild(row);
+      }
+      column.appendChild(list);
+    }
+    grid.appendChild(column);
+  }
+  root.appendChild(grid);
+  linkRow([
+    { label: "Themes", path: "workspace/themes/index.md" },
+    { label: "Plans", path: "workspace/plans/index.md" },
+    { label: "Insights", path: "workspace/insights/index.md" },
+  ]);
+}
+
+function renderCandidates() {
+  const candidates = knowledgeCandidateItems();
+  sectionTitle(`待分流 · ${candidates.length}`);
+  renderTaskList(candidates, 50);
+  linkRow([
+    { label: "Themes", path: "workspace/themes/index.md" },
+    { label: "Insights", path: "workspace/insights/index.md" },
+    { label: "Wiki", path: "wiki/index.md" },
+  ]);
+}
+
 function renderShortcuts() {
   const grid = document.createElement("div");
   grid.className = "homepage-shortcut-grid";
@@ -518,13 +687,16 @@ function renderShortcuts() {
       value: pages.length,
       note: config.note,
     })),
+    { icon: "◎", label: "Themes", path: "workspace/themes/index.md", value: themePages().filter((page) => page.status !== "closed").length, note: "持续关注" },
+    { icon: "◫", label: "Plans", path: "workspace/plans/index.md", value: periodPlanPages().filter((page) => page.status === "active" || page.status === "draft").length, note: "周期选择" },
+    { icon: "💡", label: "Insights", path: "workspace/insights/index.md", value: insightItems().length, note: "月度点子本" },
     { icon: "◇", label: "Wiki", path: "wiki/index.md", value: wiki.length, note: "compiled knowledge" },
     {
       icon: "✦",
-      label: "Candidates",
-      path: candidates[0] ? `${candidates[0].path}#Knowledge Candidates` : "workspace/daily/index.md",
+      label: "待分流",
+      path: candidates[0] ? `${candidates[0].path}#${candidates[0].anchor}` : "workspace/daily/index.md",
       value: candidates.length,
-      note: "待编译知识",
+      note: "待决定去向",
     },
   ];
 
@@ -569,6 +741,7 @@ function renderDashboardHero(dashboardRoot) {
   const quickLinks = [
     { label: "Today", path: todayPage?.file?.path || "workspace/daily/index.md" },
     { label: "Tasks", path: "workspace/tasks/index.md" },
+    { label: "Focus", path: "workspace/overview/focus.md" },
     { label: "Books", path: "wiki/sources/books/index.md" },
     { label: "Movies", path: "wiki/sources/movies/index.md" },
     { label: "Wiki", path: "wiki/index.md" },
@@ -586,6 +759,8 @@ const renderers = {
   knowledge: renderKnowledge,
   todo: renderTodo,
   activity: renderActivity,
+  focus: renderFocus,
+  candidates: renderCandidates,
   shortcuts: renderShortcuts,
 };
 
@@ -595,7 +770,7 @@ function requiredDataviewFolders() {
     : [];
   const requiredFolders = new Set();
 
-  if (["home", "calendar", "today", "knowledge", "activity", "shortcuts"].includes(panel)) {
+  if (["home", "calendar", "today", "knowledge", "activity", "shortcuts", "candidates"].includes(panel)) {
     requiredFolders.add(dailyFolder);
   }
   if (["home", "todo"].includes(panel)) requiredFolders.add(taskFolder);
@@ -605,6 +780,11 @@ function requiredDataviewFolders() {
     requiredFolders.add("raws/Douban/teleplay");
   }
   if (["home", "knowledge", "activity", "shortcuts"].includes(panel)) requiredFolders.add("wiki");
+  if (["home", "focus", "shortcuts"].includes(panel)) {
+    requiredFolders.add(themeFolder);
+    requiredFolders.add(insightFolder);
+    requiredFolders.add(planFolder);
+  }
 
   return [...requiredFolders].filter((folder) =>
     markdownPaths.some((path) => path.startsWith(`${folder}/`))
@@ -636,6 +816,7 @@ function renderPanelView() {
       { panel: "calendar", title: "Calendar", options: { compact: true } },
       { panel: "todo", title: "Tasks", options: { compact: true } },
       { panel: "activity", title: "Recent Activity" },
+      { panel: "focus", title: "Focus" },
       { panel: "shortcuts", title: "Explore" },
     ];
 

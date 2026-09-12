@@ -2,12 +2,12 @@
 type: schema
 schema: workflow
 workflow: media-catalog
-updated: 2026-08-26
+updated: 2026-09-12
 ---
 
 # Media Catalog Workflow
 
-Douban Raw 是书籍、电影和剧集的唯一目录；目录视图直接消费 Raw Properties 与根 `assets/` 封面，不为每个条目复制一份 Wiki 对象页。
+Douban Raw 是书籍、电影和剧集的唯一目录；目录视图直接消费 Raw Properties 与 `raws/Douban/_assets/` 封面，不为每个条目复制一份 Wiki 对象页。
 
 ## 入口
 
@@ -32,7 +32,7 @@ Douban Raw 是书籍、电影和剧集的唯一目录；目录视图直接消费
 ## 约束
 
 - 目录视图和人工覆盖不回写 Raw。
-- 根 `assets/` 继续由 Douban 插件维护，不复制、重命名或覆盖。
+- `raws/Douban/_assets/` 继续由 Douban 插件维护，不复制、重命名或覆盖。
 - `collectionDate` 是 Douban 记录日期，不自动改名为实际阅读或观看完成日期。
 - 只有 WeRead、没有对应 Douban 条目的版本保留在 Raw，并进入维护审计；它不自动成为第二套正式目录。
 - 删除 Legacy 目录页或重复封面前，先验证新目录、人工内容和附件引用均可访问。

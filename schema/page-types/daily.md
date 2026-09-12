@@ -2,12 +2,12 @@
 type: schema
 schema: page-type
 page_type: daily
-updated: 2026-08-28
+updated: 2026-09-12
 ---
 
 # Daily
 
-Daily 是按日期保存的轻量 Workspace 工作记录，用来组织跨日任务的当日 occurrence、一次性当日任务，并承接材料、Knowledge Candidates 和晚间专注汇总。跨日任务的身份与全局状态由 [[schema/page-types/task|Task Entity]] 保存。
+Daily 是按日期保存的轻量 Workspace 工作记录，用来组织跨日任务的当日 occurrence、一次性当日任务，并承接材料、待分流记录和晚间专注汇总。跨日任务的身份与全局状态由 [[schema/page-types/task|Task Entity]] 保存。
 
 ## 路径
 
@@ -35,7 +35,7 @@ status: open
 - `跨日任务`：当天需要推进且由 Task Entity 承接的 occurrence，默认以 `1. 高优先级` 和 `2. 低优先级` 两个三级标题分组，组内仍按书写顺序表达先后。
 - `当日任务`：不需要 Task Entity、预期在当天收口的一次性事项；一旦决定以后继续，必须提升为 Task Entity 并移交到跨日模型。
 - `产生的材料`：当天形成或引用的 Workspace 材料；引用可选，随手捕获可写入 `碎碎念` 三级标题。
-- `Knowledge Candidates`：值得后续人工选择 compile 的候选。
+- `待分流`：问题、想法、需求或资料的显式候选；旧 Daily 的 `Knowledge Candidates` 继续兼容。
 - `专注`：`/daily-review` 生成的 DIDA 关联任务当日专注汇总。
 - `收尾`：当天推进结果和明日关注点。
 
@@ -63,6 +63,6 @@ Checkbox 表示“这项任务在今天的切片”，不表示 Task Entity 或�
 - DIDA 的任务状态不得自动覆盖 Daily Checkbox。
 - `专注` 中的生成内容必须限制在 `<!-- dida-focus:start -->` 与 `<!-- dida-focus:end -->` 之间。
 
-## Knowledge Candidates
+## 待分流
 
-候选项可以使用 Markdown task 表示待处理状态。写入 Daily 不等于成为 Wiki 事实；只有用户明确选择后才能执行 compile，完成后再链接目标 Wiki 页面。
+候选项可以使用普通列表或 Markdown task；Daily Review 还会扫描整篇人工内容，而不只检查本节。写入 Daily 不等于成为 Wiki 事实，路由规则见 [[schema/workflows/knowledge-intake|Knowledge Intake]]。

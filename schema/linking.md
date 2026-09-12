@@ -1,7 +1,7 @@
 ---
 type: schema
 schema: linking
-updated: 2026-08-26
+updated: 2026-09-12
 ---
 
 # 链接与溯源
@@ -19,8 +19,8 @@ updated: 2026-08-26
 
 ```text
 raws/<source-system>/...
-    → wiki/sources/<source page>
-    → wiki/<domain>/<concept or synthesis>
+    → workspace/themes/<theme>（可选的形成过程）
+    → wiki/sources/<source page> / wiki/<domain>/<knowledge>
 ```
 
 - Raw 文件保存来源原貌，来源页完成身份合并、摘要和质量说明。
@@ -38,7 +38,7 @@ Douban 媒体目录是一个特例：目录视图可以直接读取 Raw，并按
 
 ## 附件
 
-- 当前根 `assets/` 为 Douban Raw 封面缓存，由插件维护。
+- `raws/Douban/_assets/` 为 Douban Raw 封面缓存，由插件维护。
 - 新生成的 Wiki 附件放入 `wiki/_assets/<domain>/`，Workspace 附件放入 `workspace/_assets/`。
 - 不为了视图整齐裁剪或覆盖原始封面；展示比例由视图或 CSS 控制。
 - 移动附件前检查 Markdown embed、wikilink、普通相对路径和插件模板配置。

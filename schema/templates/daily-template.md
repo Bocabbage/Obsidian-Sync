@@ -36,7 +36,9 @@ SORT choice(priority = "high", 1, choice(priority = "normal", 2, 3)) ASC, update
 
 ### 碎碎念
 
-## Knowledge Candidates
+## 待分流
+
+> 可记录问题、想法、需求或资料；不确定时保持原文，Daily Review 再建议去向。
 
 ## 专注
 

@@ -2,7 +2,7 @@
 type: schema
 schema: workflow
 workflow: daily
-updated: 2026-08-28
+updated: 2026-09-12
 ---
 
 # Daily Workflow
@@ -30,7 +30,7 @@ Daily 在同一文件中完成晨间组织、日间状态更新和晚间复盘�
 
 - 用户可以随时更新 Markdown task 状态；`[ ]` 和 `[/]` 是尚未完成当天决策的临时状态。
 - 与任务直接相关的进展或阻塞写在该任务的缩进项目下。
-- 当天形成的独立材料写入 `产生的材料`；值得长期保留的概念、来源或问题写入 `Knowledge Candidates`。
+- 当天形成的独立材料写入 `产生的材料`；明确希望后续处理的问题、想法、需求或资料可以写入 `待分流`，普通碎片继续留在原位置。
 - Task Entity 的全局状态只在用户明确表达整体完成、取消或阻塞时更新；Agent 不从 DIDA 状态或单日 Checkbox 自动推断。
 
 ## 晚间 `/daily-review`
@@ -50,7 +50,8 @@ Daily 在同一文件中完成晨间组织、日间状态更新和晚间复盘�
    <!-- dida-focus:end -->
    ```
 
-10. 保留任务正文、Checkbox、材料、候选和人工复盘；检查通过且专注区完成刷新后，才把页面 `status` 改为 `closed`。
+10. 按 `knowledge-intake.md` 扫描整篇 Daily 的人工内容，提出少量 Insight、Theme、Task 或编译材料候选；待分流内容不阻止 Daily 关闭。
+11. 保留任务正文、Checkbox、材料、候选和人工复盘；检查通过且专注区完成刷新后，才把页面 `status` 改为 `closed`。
 
 专注摘要至少包括关联任务合计、番茄钟次数与时长、正计时时长和按任务明细。Task Entity 关联项使用本地 Task wikilink 作为主身份，并保留 DIDA 来源入口；已关联但当天没有 focus 记录的任务显示 `0m`。
 
@@ -74,8 +75,10 @@ node .agents/skills/daily/scripts/dida-focus-summary.mjs --file <当天 Daily �
 - 不因标题相似自动合并 Task；DIDA task ID 完全一致可以精确复用实体，无外部 ID 时必须核对目标和连续上下文。
 - 不扫描或修改 `raws/`、Legacy、Archived、Canvas 或 `.obsidian/workspace*.json`。
 
-## Knowledge Candidates
+## Knowledge Intake
 
-- 候选只进入 Daily 汇总，不自动 compile。
-- 用户明确选择某个候选后，另按 `schema/workflows/compile.md` 处理。
-- compile 完成后可以在原候选后追加目标 Wiki wikilink，并将候选标为完成。
+- Review 扫描任务子项、材料、碎碎念、待分流和收尾，但排除任务池、Dataview 与自动专注区。
+- 高置信 Insight 追加到当月 Insight Log；相关问题更新已有 Theme，只有达到持续关注门槛时才新建 Theme。
+- 普通列表与 Markdown task 都可以作为候选；旧标题 `Knowledge Candidates` 与新标题 `待分流` 均被聚合。
+- 用户日常使用时应先确认建议去向；明确委托整批迁移时可以处理高置信内容，并把不确定项原样保留。
+- compile 完成后可以在原候选后追加目标 Wiki wikilink，并将 task 候选标为完成。

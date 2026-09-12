@@ -2,7 +2,7 @@
 type: schema
 schema: workflow
 workflow: homepage
-updated: 2026-08-28
+updated: 2026-09-12
 ---
 
 # Homepage Workflow
@@ -24,9 +24,10 @@ Homepage 是工作日启动和快速导航视图，不是新的事实层。
 | `today.md` | 当天 Daily | 今日任务切片和完成概览 |
 | `media.md` | Douban Raw、媒体目录入口 | Books、Movies、Series 和最近记录 |
 | `todo.md` | `workspace/tasks/`、`workspace/backlog.md` | 活跃、阻塞、Inbox 与系统 Backlog 入口 |
-| `knowledge.md` | Daily Knowledge Candidates、`wiki/` | 候选知识和最近 Wiki 更新 |
+| `knowledge.md` | Daily 待分流、`wiki/` | 候选内容和最近 Wiki 更新 |
 | `activity.md` | Daily、Douban Raw、`wiki/` | 限量合并最近活动，不保存事件副本 |
-| `shortcuts.md` | 媒体目录、`wiki/`、Daily Candidates | Books、Movies、Series、Wiki 与候选知识入口 |
+| `focus.md` | Period Plan、Theme、Insight Log | 当前方向、最近 Insight 与 Review 提醒 |
+| `shortcuts.md` | 媒体、Theme、Plan、Insight、`wiki/`、Daily 待分流 | 紧凑入口 |
 
 `home.md` 在一个稳定的 Markdown 阅读视图中组合首屏摘要；Canvas 通过同一组文件节点提供可自由缩放、重排的视觉布局。完整的 Media 与 Knowledge 组件作为下钻页保留，不在自动首页展开长列表。这些组件只派生展示；删除任一入口或查询组件不得丢失 Daily、任务、媒体和 Wiki 事实。
 
@@ -36,13 +37,15 @@ Homepage 是工作日启动和快速导航视图，不是新的事实层。
 Workspace 状态与快捷入口
 Today (7/12)             Calendar (5/12)
 Tasks (7/12)             Recent Activity (5/12)
+Focus (12/12)
 Explore (12/12)
 ```
 
 - Today 与 Tasks 各最多展示 4 项，Recent Activity 最多展示 5 项。
 - Recent Activity 分别从媒体、Wiki 和 Daily 取少量最近项，避免单一高频来源占满首页。
+- Focus 分三列显示当前 Plan、Active Theme 与最近 Insight，并显示已到 `next_review` 的数量。
 - Explore 只显示计数和入口；完整目录、日志与历史继续留在各自页面。
-- 窄窗口按 Today、Calendar、Tasks、Recent Activity、Explore 顺序堆叠。
+- 窄窗口按 Today、Calendar、Tasks、Recent Activity、Focus、Explore 顺序堆叠。
 
 ## 启动配置
 

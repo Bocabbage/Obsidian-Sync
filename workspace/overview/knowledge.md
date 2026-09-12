@@ -1,7 +1,7 @@
 ---
 type: workspace-view
 view: homepage-knowledge
-updated: 2026-08-27
+updated: 2026-09-12
 ---
 
 # Knowledge

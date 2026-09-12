@@ -2,6 +2,7 @@
 type: implementation-spec
 status: agreed
 implementation_status: complete
+superseded_by: "[[workspace/specs/knowledge-intake-v2|Knowledge Intake v2]]"
 phase_1_status: complete
 phase_2_status: complete
 phase_3_status: complete
@@ -14,6 +15,8 @@ updated: 2026-08-27
 ---
 
 # Knowledge System v1
+
+> 本文件记录 v1 完成时的历史状态；2026-09-12 起，Douban 封面位置、Viewing 空壳清理与 Theme / Insight / Period Plan 规则由 [[workspace/specs/knowledge-intake-v2|Knowledge Intake v2]] 接管。
 
 ## 1. 目的
 

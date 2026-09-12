@@ -2,7 +2,7 @@
 type: schema
 schema: source-adapter
 source_system: douban
-updated: 2026-08-26
+updated: 2026-09-12
 ---
 
 # Douban 来源适配
@@ -11,7 +11,7 @@ updated: 2026-08-26
 
 - 数据：`raws/Douban/book/`、`raws/Douban/movie/`、`raws/Douban/teleplay/`。
 - 同步报告：`raws/Douban/豆瓣同步结果_*.md`。
-- 封面缓存：根目录 `assets/`。
+- 封面缓存：`raws/Douban/_assets/`。
 
 ## 所有权
 
@@ -23,7 +23,7 @@ updated: 2026-08-26
 
 - Douban Raw 是书籍、电影和剧集的唯一媒体目录；卡片和筛选视图可以直接消费 Raw，不为每个条目复制 Wiki 对象页。
 - `doubanId` 是目录锚点。同步文件名由标题生成，可能随标题变化或出现清洗异常，不得把文件名当作稳定身份。
-- 根 `assets/` 的封面由插件维护。书籍当前使用 JPG，电影与剧集当前常见为 WebP；视图先按 Raw 文件名解析，命名不一致时只读使用 Raw 正文中的插件封面路径。若该链接本身失效，只允许采用唯一的文件名前缀候选；不得改写缓存或做模糊多选匹配。
+- `raws/Douban/_assets/` 的封面由插件维护。书籍当前使用 JPG，电影与剧集当前常见为 WebP；视图先按 Raw 文件名解析，命名不一致时只读使用 Raw 正文中的插件封面路径。若该链接本身失效，只允许采用唯一的文件名前缀候选；不得改写缓存或做模糊多选匹配。
 
 ## 可用字段
 

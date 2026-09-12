@@ -1,11 +1,11 @@
 ---
 name: daily
-description: 在本 Obsidian Vault 创建或更新轻量 Daily 与跨日 Task Entity；用户说“今日计划”“开始今天”或“/daily”时维护跨日任务 occurrence、当日任务和材料，说“今日总结”“记录完成”或“/daily-review”时收口当日状态并汇总已关联 DIDA 任务的专注。DIDA 不是唯一任务来源。
+description: 在本 Obsidian Vault 创建或更新轻量 Daily 与跨日 Task Entity；用户说“今日计划”“开始今天”或“/daily”时维护跨日任务 occurrence、当日任务和材料，说“今日总结”“记录完成”或“/daily-review”时收口当日状态、汇总已关联 DIDA 任务的专注，并建议 Insight、Theme、Task 或知识材料的去向。DIDA 不是唯一任务来源。
 ---
 
 # Daily v3
 
-Daily 是当天工作切片和材料入口，Task Entity 是跨日承诺与全局状态。执行前阅读 `schema/page-types/daily.md`、`schema/page-types/task.md` 与 `schema/workflows/daily.md`。
+Daily 是当天工作切片和材料入口，Task Entity 是跨日承诺与全局状态。执行前阅读 `schema/page-types/daily.md`、`schema/page-types/task.md`、`schema/workflows/daily.md` 与 `schema/workflows/knowledge-intake.md`。
 
 ## 路径与模板
 
@@ -76,14 +76,18 @@ Daily Checkbox 不代表 Task Entity 或 DIDA 整体状态。不要因 DIDA 仍�
    <!-- dida-focus:end -->
    ```
 
-7. 检查与汇总都成功并完成刷新后，把页面 Property `status` 设为 `closed`。再次执行时刷新同一区域，不追加重复摘要。
+7. 扫描整篇 Daily 的人工内容，排除任务池、Dataview、模板提示和专注生成区；提出少量高置信候选，并区分 Insight、Theme、Task、待编译材料和仅保留的个人片段。
+8. 日常 Review 先用一个紧凑问题让用户确认写入去向；用户明确授权整批迁移时可直接处理高置信候选，并把不确定项原样留在 Daily。
+9. Insight 追加到 `workspace/insights/{YYYY}/{YYYY-MM}.md` 并保留 Daily 来源；反复问题优先更新已有 Theme，达到持续关注门槛时才新建。
+10. 检查与汇总都成功并完成刷新后，把页面 Property `status` 设为 `closed`。再次执行时刷新同一区域，不追加重复摘要。
 
 专注脚本读取 `跨日任务`、`当日任务` 中的 Task wikilink，并解析实体上的 DIDA 映射；同时兼容 Daily 里的直接 DIDA Webapp 链接。它按 `tasks[].taskId` 匹配当天 focus、按记录 ID 去重，不会写回 DIDA，也不会为无 DIDA 映射的本地任务虚构时长。
 
 若脚本失败、未登录或生成标记缺失/重复，保留现有专注区不变并报告问题。不要退回使用不可靠的 `task get.focusSummaries`。
 
-## 材料与 Knowledge Candidates
+## 材料与待分流
 
 - 与任务直接相关的进展、阻塞或产出可以缩进写在任务下，不建立“过程中”栏目。
 - 需要独立检索或复用的内容写入 `产生的材料`，引用可选；随手捕获写入其下的 `碎碎念`。
-- Knowledge Candidate 只是候选；只有用户明确选择后才能按 compile workflow 进入 Wiki。
+- 新 Daily 的显式候选写入 `待分流`；旧 Daily 的 `Knowledge Candidates` 继续兼容，普通列表和 Markdown task 都可以被聚合。
+- 候选只是入口；按 Knowledge Intake 决定是否进入 Insight、Theme、Task 或 Compile，不要求所有碎片当天分类。

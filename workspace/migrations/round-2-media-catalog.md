@@ -7,6 +7,8 @@ updated: 2026-08-26
 
 # Round 2：Douban 媒体目录与 Legacy 改造
 
+> 后续迁移：2026-09-12 封面缓存已从根 `assets/` 移至 `raws/Douban/_assets/`；空壳 Viewing Note 已移入 `.trash/knowledge-intake-v2-2026-09-12/`。以下内容保留 2026-08-26 验收时的历史路径与判断。
+
 ## 范围
 
 - Douban Raw 作为书籍、电影和剧集的唯一目录。

@@ -22,7 +22,7 @@ Douban Raw 是唯一书籍目录；WeRead、纸质书或其他人工阅读内容
 - `wiki/sources/books/index.md` 直接读取 Douban Raw 形成卡片目录，不为每本书批量生成 compiled source page。
 - ISBN 完全一致且没有人工覆盖时，目录动态连接 WeRead；不同版本或冲突写入 `wiki/sources/link-overrides/`。
 - 人工摘抄、想法、个人评分和非插件阅读过程写入 `workspace/reading/books/`，只有确有内容时才建页。
-- 根 `assets/` 是 Douban 插件封面缓存，只读展示；阅读过程附件放 `workspace/_assets/reading/`。
+- `raws/Douban/_assets/` 是 Douban 插件封面缓存，只读展示；阅读过程附件放 `workspace/_assets/reading/`。
 - 作者、作品和可复用阅读知识只有经过 compile 才进入 Wiki。
 - 已退役的 `legacy-读书/` 不再是写入目标；需要恢复时从迁移记录指向的 `.trash` 快照处理。
 

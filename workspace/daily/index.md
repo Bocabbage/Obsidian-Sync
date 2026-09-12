@@ -1,7 +1,7 @@
 ---
 type: workspace-record
 status: active
-updated: 2026-08-28
+updated: 2026-09-12
 ---
 
 # Daily 总览
@@ -50,14 +50,8 @@ GROUP BY file.link
 SORT file.day DESC
 ```
 
-## Knowledge Candidates
+## 待分流
 
-```dataview
-TASK
-FROM "workspace/daily"
-WHERE !completed
-  AND status != "-"
-  AND meta(section).subpath = "Knowledge Candidates"
-GROUP BY file.link
-SORT file.day DESC
+```dataviewjs
+await dv.view("workspace/overview/_views/homepage", { panel: "candidates" });
 ```

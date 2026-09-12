@@ -1,7 +1,7 @@
 ---
 type: schema
 schema: properties
-updated: 2026-08-28
+updated: 2026-09-12
 ---
 
 # Properties 规范
@@ -25,7 +25,7 @@ domain: computer-science
 topics: []
 sources: []
 created: 2026-08-25
-updated: 2026-08-25
+updated: 2026-09-12
 ---
 ```
 
@@ -69,6 +69,12 @@ raw_sources:
 - 会话、计划和迁移状态的字段不得复制到 Wiki 页面。
 - 不要求现有 Legacy 笔记立即补齐 Properties；字段迁移应随领域 compile 分批进行。
 
+### Theme、Insight 与 Period Plan
+
+- Theme 使用 `type: theme` 和 `status: seed|active|paused|closed`，可选 `next_review`；问题、来源和输出链接保存在正文。
+- 月度 Insight 文件使用 `type: insight-log`、`period: YYYY-MM` 和 `status: active|closed`，单条 Insight 不单独建立页面或 ID。
+- 周/月/季度计划统一使用 `type: period-plan`，以 `period_type`、`period`、`starts`、`ends` 和可选 `next_review` 描述周期。
+
 ### Reading Note 与 Viewing Note
 
 - `reading-note` 和 `viewing-note` 都是按需页面，不作为媒体目录。
@@ -87,17 +93,19 @@ title: 示例任务
 status: active
 priority: normal
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-12
 due:
 dida_project_id:
 dida_task_id:
 dida_url:
+themes: []
 ---
 ```
 
 - `task_id` 是 Vault 内部身份，必须与文件名一致并且永不复用。
 - `status` 取值为 `inbox`、`active`、`blocked`、`done` 或 `cancelled`；`priority` 取值为 `high`、`normal` 或 `low`。
 - `due`、`closed` 和 DIDA 映射均为可选字段；DIDA 映射不得覆盖本地身份或状态。
+- `themes` 可选，只保存稳定的 Theme wikilink；临时上下文继续留在正文。
 - 完整生命周期与 occurrence 语法见 [[schema/page-types/task|Task Entity]]。
 
 ### Daily

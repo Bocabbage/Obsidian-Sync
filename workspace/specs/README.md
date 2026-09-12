@@ -1,6 +1,6 @@
 ---
 type: spec-index
-updated: 2026-08-25
+updated: 2026-09-12
 ---
 
 # Workspace Specs
@@ -19,3 +19,4 @@ Spec 中的规则在提升到 Schema 之前不视为已生效；当前行为仍�
 ## 当前规格
 
 - [[workspace/specs/knowledge-system-v1|Knowledge System v1]]：Daily、Douban/WeRead、Legacy、卡片与 Canvas 首页的整体演进。
+- [[workspace/specs/knowledge-intake-v2|Knowledge Intake v2]]：Theme、Insight、周期规划、知识编译与来源目录的第二阶段改造。

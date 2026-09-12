@@ -120,6 +120,7 @@
 .dashboard-calendar { grid-column: span 5; }
 .dashboard-todo { grid-column: span 7; }
 .dashboard-activity { grid-column: span 5; }
+.dashboard-focus { grid-column: 1 / -1; }
 .dashboard-shortcuts { grid-column: 1 / -1; }
 
 .homepage-panel a {
@@ -395,7 +396,7 @@
 
 .homepage-shortcut-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.55rem;
 }
 
@@ -475,6 +476,50 @@
   font-size: var(--font-ui-medium);
 }
 
+.homepage-focus-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.homepage-focus-summary > span {
+  padding: 0.34rem 0.58rem;
+  border-radius: 999px;
+  background: var(--background-secondary);
+  color: var(--text-muted);
+  font-size: var(--font-smallest);
+}
+
+.homepage-focus-summary strong {
+  margin-right: 0.2rem;
+  color: var(--text-normal);
+}
+
+.homepage-focus-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.homepage-focus-column {
+  min-width: 0;
+  padding: 0.7rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  background: var(--background-secondary);
+}
+
+.homepage-focus-column > h3 {
+  margin: 0 0 0.55rem;
+  color: var(--text-muted);
+  font-size: var(--font-small);
+}
+
+.homepage-empty-inline {
+  color: var(--text-faint);
+  font-size: var(--font-smallest);
+}
+
 .homepage-future-todo {
   display: flex;
   flex-wrap: wrap;
@@ -542,8 +587,13 @@
   .dashboard-calendar,
   .dashboard-todo,
   .dashboard-activity,
+  .dashboard-focus,
   .dashboard-shortcuts {
     grid-column: 1;
+  }
+
+  .homepage-focus-grid {
+    grid-template-columns: 1fr;
   }
 
   .homepage-shortcut-grid {

@@ -1,7 +1,7 @@
 ---
 type: schema
 schema: ownership
-updated: 2026-08-28
+updated: 2026-09-12
 ---
 
 # 目录所有权
@@ -11,7 +11,7 @@ updated: 2026-08-28
 | 路径 | 事实地位 | 默认读取 | 默认写入 | 主要维护者 |
 |---|---|---:|---:|---|
 | `raws/` | 原始证据 | 是 | 否 | 外部来源或同步插件 |
-| `assets/` | 当前为 Douban 原始封面缓存 | 按需 | 否 | Douban 插件 |
+| `raws/Douban/_assets/` | Douban 原始封面缓存 | 按需 | 否 | Douban 插件 |
 | `workspace/` | 人的工作状态和过程记录 | 按需 | 是 | 人为主、Agent 辅助 |
 | `wiki/` | 已编译或正在编译的长期知识 | 是 | 是 | Agent 为主、人审阅 |
 | `schema/` | 结构与行为契约 | 是 | 谨慎 | 人与 Agent 共同维护 |
@@ -27,11 +27,12 @@ updated: 2026-08-28
 - 不为了补充分类、wikilink 或状态而手工修改插件控制的 Raw 文件；这类修改可能在下次同步时被覆盖。
 - 对 Raw 的解释、分类、去重和跨来源连接不回写原文件。Douban 媒体目录的精确 ISBN 关系可由视图动态推导；其他稳定判断写入 `wiki/sources/`。
 - `raws/Douban/豆瓣同步结果_*.md` 是同步运行报告，不作为知识来源引用。
-- 当前根目录 `assets/` 是 Douban 插件使用的封面缓存；在来源附件策略迁移前，不移动、改名或覆盖其中图片。
+- `raws/Douban/_assets/` 是 Douban 插件使用的封面缓存；它和 Douban Markdown 一样由插件拥有，不移动、改名或覆盖其中图片。
+- Web Raw 以捕获日期组织路径，来源标签只保留采集侧语义；不在 Raw 内写入 Theme、处理状态或 Wiki 领域。
 
 ## Workspace 层
 
-- `workspace/` 保存会话摘要、Daily、Task Entity、计划、草稿、迁移清单和待办等持续变化的工作状态。
+- `workspace/` 保存会话摘要、Daily、Task Entity、Theme、Insight、计划、草稿、迁移清单和待办等持续变化的工作状态。
 - Agent 只在用户请求或已触发的本地 Skill 范围内修改 Workspace 内容。
 - Workspace 内容不是长期知识结论；其中有复用价值的内容应经过 compile 后进入 Wiki。
 
