@@ -2,7 +2,7 @@
 type: schema
 schema: source-adapter
 source_system: web
-updated: 2026-09-12
+updated: 2026-09-15
 ---
 
 # Web 来源适配
@@ -13,7 +13,7 @@ updated: 2026-09-12
 raws/Web/{YYYY}/{YYYY-MM}/{YYYY-MM-DD}-{slug}.md
 ~~~
 
-目录只按捕获日期分片，避免在尚未理解内容时强行决定领域；主题使用多值 source_tags，不复制 Wiki 领域树。
+目录只按捕获日期分片，避免在尚未理解内容时强行决定领域；主题使用多值 `tags`，不复制 Wiki 领域树。
 
 ## 最小字段映射
 
@@ -26,13 +26,13 @@ url:
 captured: YYYY-MM-DD
 published:
 author:
-source_tags: []
+tags: []
 ---
 ~~~
 
-- url 与 captured 是最低可追溯字段；published、author 和 source_tags 按来源能力填写。
+- url 与 captured 是最低可追溯字段；published、author 和 `tags` 按来源能力填写。
 - 外部 Web Clipper 使用自己的字段名时可以由 adapter 映射，不为格式统一批量改写已捕获正文。
-- source_tags 是宽松来源标签，不代表 Wiki domain、Theme 或编译结论。
+- `tags` 使用 Obsidian 原生标签语义，只保留少量宽松来源主题，不代表 Wiki domain、Theme 或编译结论。
 
 ## 所有权与消费
 

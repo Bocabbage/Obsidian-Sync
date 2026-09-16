@@ -2,7 +2,7 @@
 type: schema
 schema: page-type
 page_type: task
-updated: 2026-09-12
+updated: 2026-09-14
 ---
 
 # Task Entity
@@ -45,7 +45,7 @@ themes: []
 - `due` 可选，只在存在真实截止日期时填写 `YYYY-MM-DD`。
 - 任务进入 `done` 或 `cancelled` 时必须增加 `closed: YYYY-MM-DD`；Daily 任务池以该日期保留历史时点上的未闭环任务。
 - DIDA 字段可选；存在关联时同时保存 project ID、task ID 和稳定 Webapp URL。其他外部系统以后使用独立适配字段，不复用 `task_id`。
-- `themes` 可选，用于连接一个或多个持续关注主题；Task 状态仍独立于 Theme 和 Period Plan。
+- `themes` 可选，用于连接一个或多个用户已设立的持续方向；Theme 指导任务，关联不代表所有活动或时间属于该 Theme。允许无 Theme 的任务，Task 状态仍独立于 Theme 和 Period Plan。
 
 ## 何时建立 Task Entity
 
@@ -76,9 +76,16 @@ Task Entity 在 Daily 中以 wikilink 标识所有权：
 ## 身份归并
 
 - 相同 `task_id` 必然是同一任务。
-- 相同且非空的 `dida_task_id` 可以精确归并到同一 Task Entity。
-- 没有稳定外部 ID 时，标题相似只产生人工候选；只有目标、范围和连续上下文都一致时才能合并。
+- 多个本地 Task 可以共享同一个 DIDA task（例如季度计时容器），DIDA ID 相同不构成本地任务相同的证据。
+- 标题或外部 ID 相似只产生人工候选；只有目标、范围和连续上下文都一致时才能合并。
 - 一次性子任务、同一项目下的不同事项、日期不同的例行执行不得仅因关键词相同而合并。
+
+## 专注归属
+
+- Daily Review 按当天出现的本地 Task 与 DIDA 映射归属当天专注，结果保存到该 Daily 的正文生成区。
+- 默认同日一个 DIDA 计时来源只对应一个本地 Task；偶发多个本地 Task 共用时保留候选并标注待归属，不自动覆盖、平分或重复计入任务小计。
+- 周/月统计消费已经保存的每日归属，不将季度 DIDA 总量映射到每个关联 Task，也不据当前映射重算历史。
+- Task 与 Theme 的关联不是工时分摊规则，不提供精确 Theme 学习时长。
 
 ## 页面正文
 

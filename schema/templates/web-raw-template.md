@@ -6,7 +6,7 @@ url: "{{url}}"
 captured: "{{date:YYYY-MM-DD}}"
 published:
 author:
-source_tags: []
+tags: []
 ---
 
 # {{title}}

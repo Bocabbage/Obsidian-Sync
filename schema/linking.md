@@ -1,7 +1,7 @@
 ---
 type: schema
 schema: linking
-updated: 2026-09-12
+updated: 2026-09-16
 ---
 
 # 链接与溯源
@@ -11,6 +11,7 @@ updated: 2026-09-12
 - 使用 `[[wikilinks]]` 连接知识库内页面。
 - 标题唯一且稳定时可使用短链接；存在同名风险时使用完整 vault 路径和显示别名。
 - 跨领域关系通过链接表达，不为了同时出现在多个目录而复制页面。
+- Workspace 导航索引使用 `_Index.md`，链接须包含目录并带清晰别名，例如 `[[workspace/themes/_Index|Themes]]`；Wiki 和插件来源索引不随之改名。
 - 页面重命名或移动前搜索所有 wikilink、Markdown link、Dataview 查询和 Skill 中的路径文本。
 
 ## 来源链
@@ -23,7 +24,7 @@ raws/<source-system>/...
     → wiki/sources/<source page> / wiki/<domain>/<knowledge>
 ```
 
-- Raw 文件保存来源原貌，来源页完成身份合并、摘要和质量说明。
+- Raw 文件保存来源原文或声明范围的忠实捕获，来源页完成身份合并、派生摘要和质量说明；结构化捕获不自动成为已验证知识。
 - concept、entity、synthesis 页面通过 `sources` 链接来源页。
 - 直接引用 Raw 中的具体段落时，可以在正文增加对应 Raw wikilink或块引用，但不替代来源页。
 - 不在插件控制的 Raw 文件中手工添加反向链接；由来源页承担汇聚关系。

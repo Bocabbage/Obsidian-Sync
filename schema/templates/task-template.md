@@ -15,9 +15,11 @@ themes: []
 
 # {{title}}
 
-> [[workspace/tasks/index|✅ Tasks]] · `{{task_id}}`
+> [[workspace/tasks/_Index|✅ Tasks]] · `{{task_id}}`
 
 ## 目标
+
+<!-- themes 可为空；只关联用户已设立的方向，不为任务自动创建 Theme。DIDA 可与其他本地 Task 共享。 -->
 
 -
 

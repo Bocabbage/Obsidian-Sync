@@ -1,12 +1,12 @@
 ---
-type: workspace-record
+type: workspace-index
 status: active
-updated: 2026-09-12
+updated: 2026-09-14
 ---
 
 # Daily 总览
 
-Daily 正式路径为 `workspace/daily/{YYYY}/{YYYY-MM}/{YYYY-MM-DD}.daily.md`。跨日任务由 [[workspace/tasks/index|Tasks]] 保存身份与全局状态，Daily 的 Markdown task 只表示当天 occurrence。
+Daily 正式路径为 `workspace/daily/{YYYY}/{YYYY-MM}/{YYYY-MM-DD}.daily.md`。跨日任务由 [[workspace/tasks/_Index|Tasks]] 保存身份与全局状态，Daily 的 Markdown task 只表示当天 occurrence。
 
 ## 最近 Daily
 
@@ -45,6 +45,8 @@ WHERE file.frontmatter.status = "closed"
     OR meta(section).subpath = "当日任务"
     OR meta(section).subpath = "1 高优先级"
     OR meta(section).subpath = "2 低优先级"
+    OR meta(section).subpath = "WORK"
+    OR meta(section).subpath = "LIFE"
   )
 GROUP BY file.link
 SORT file.day DESC

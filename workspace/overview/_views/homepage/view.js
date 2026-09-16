@@ -17,6 +17,8 @@ const taskSections = new Set([
   "2 低优先级",
   "1. 高优先级",
   "2. 低优先级",
+  "WORK",
+  "LIFE",
 ]);
 const candidateSections = new Set(["待分流", "Knowledge Candidates"]);
 
@@ -357,7 +359,7 @@ function renderCalendar() {
   }
   root.appendChild(grid);
 
-  const links = [{ label: "Daily 总览", path: "workspace/daily/index.md" }];
+  const links = [{ label: "Daily 总览", path: "workspace/daily/_Index.md" }];
   const todayPage = pagesByDate.get(todayKey);
   if (todayPage) links.unshift({ label: "今日 Daily", path: todayPage.file.path });
   linkRow(links);
@@ -380,7 +382,7 @@ function renderToday(options = {}) {
 
   if (!page) {
     emptyState("今天还没有 Daily。请使用 Obsidian 的“打开今天的日记”命令按模板创建。");
-    linkRow([{ label: "Daily 总览", path: "workspace/daily/index.md" }]);
+    linkRow([{ label: "Daily 总览", path: "workspace/daily/_Index.md" }]);
     return;
   }
 
@@ -401,7 +403,7 @@ function renderToday(options = {}) {
   renderTaskList(open.map((task) => ({ task, path, label: "Today" })), compact ? 4 : 7);
   linkRow([
     { label: "打开今日 Daily", path },
-    { label: "Tasks 总览", path: "workspace/tasks/index.md" },
+    { label: "Tasks 总览", path: "workspace/tasks/_Index.md" },
   ]);
 }
 
@@ -496,8 +498,8 @@ function renderTodo(options = {}) {
   renderTaskEntities(visible, compact ? 4 : 7);
 
   linkRow([
-    { label: "Tasks 总览", path: "workspace/tasks/index.md" },
-    { label: "Daily 总览", path: "workspace/daily/index.md" },
+    { label: "Tasks 总览", path: "workspace/tasks/_Index.md" },
+    { label: "Daily 总览", path: "workspace/daily/_Index.md" },
     { label: "System Backlog", path: "workspace/backlog.md" },
   ]);
 }
@@ -601,7 +603,7 @@ function renderFocus() {
       empty: "暂无周期草案",
     },
     {
-      title: "Active Themes",
+      title: "Themes · 我的方向",
       items: themes.slice(0, 3).map((page) => ({
         icon: page.status === "active" ? "●" : "○",
         title: stringValue(page.title) || page.file.name,
@@ -656,9 +658,9 @@ function renderFocus() {
   }
   root.appendChild(grid);
   linkRow([
-    { label: "Themes", path: "workspace/themes/index.md" },
-    { label: "Plans", path: "workspace/plans/index.md" },
-    { label: "Insights", path: "workspace/insights/index.md" },
+    { label: "Themes", path: "workspace/themes/_Index.md" },
+    { label: "Plans", path: "workspace/plans/_Index.md" },
+    { label: "Insights", path: "workspace/insights/_Index.md" },
   ]);
 }
 
@@ -667,8 +669,8 @@ function renderCandidates() {
   sectionTitle(`待分流 · ${candidates.length}`);
   renderTaskList(candidates, 50);
   linkRow([
-    { label: "Themes", path: "workspace/themes/index.md" },
-    { label: "Insights", path: "workspace/insights/index.md" },
+    { label: "Themes", path: "workspace/themes/_Index.md" },
+    { label: "Insights", path: "workspace/insights/_Index.md" },
     { label: "Wiki", path: "wiki/index.md" },
   ]);
 }
@@ -687,14 +689,14 @@ function renderShortcuts() {
       value: pages.length,
       note: config.note,
     })),
-    { icon: "◎", label: "Themes", path: "workspace/themes/index.md", value: themePages().filter((page) => page.status !== "closed").length, note: "持续关注" },
-    { icon: "◫", label: "Plans", path: "workspace/plans/index.md", value: periodPlanPages().filter((page) => page.status === "active" || page.status === "draft").length, note: "周期选择" },
-    { icon: "💡", label: "Insights", path: "workspace/insights/index.md", value: insightItems().length, note: "月度点子本" },
+    { icon: "◎", label: "Themes", path: "workspace/themes/_Index.md", value: themePages().filter((page) => page.status !== "closed").length, note: "持续关注" },
+    { icon: "◫", label: "Plans", path: "workspace/plans/_Index.md", value: periodPlanPages().filter((page) => page.status === "active" || page.status === "draft").length, note: "周期选择" },
+    { icon: "💡", label: "Insights", path: "workspace/insights/_Index.md", value: insightItems().length, note: "月度点子本" },
     { icon: "◇", label: "Wiki", path: "wiki/index.md", value: wiki.length, note: "compiled knowledge" },
     {
       icon: "✦",
       label: "待分流",
-      path: candidates[0] ? `${candidates[0].path}#${candidates[0].anchor}` : "workspace/daily/index.md",
+      path: candidates[0] ? `${candidates[0].path}#${candidates[0].anchor}` : "workspace/daily/_Index.md",
       value: candidates.length,
       note: "待决定去向",
     },
@@ -739,8 +741,8 @@ function renderDashboardHero(dashboardRoot) {
   const actions = document.createElement("nav");
   actions.className = "homepage-quick-actions";
   const quickLinks = [
-    { label: "Today", path: todayPage?.file?.path || "workspace/daily/index.md" },
-    { label: "Tasks", path: "workspace/tasks/index.md" },
+    { label: "Today", path: todayPage?.file?.path || "workspace/daily/_Index.md" },
+    { label: "Tasks", path: "workspace/tasks/_Index.md" },
     { label: "Focus", path: "workspace/overview/focus.md" },
     { label: "Books", path: "wiki/sources/books/index.md" },
     { label: "Movies", path: "wiki/sources/movies/index.md" },

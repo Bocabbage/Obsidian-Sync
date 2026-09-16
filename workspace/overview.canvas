@@ -1,6 +1,6 @@
 {
 	"nodes":[
-		{"id":"overview-header","type":"text","x":0,"y":0,"width":1000,"height":100,"color":"6","text":"# Workspace Overview\n[[workspace/daily/index|Daily]] · [[workspace/tasks/index|Tasks]] · [[workspace/themes/index|Themes]] · [[workspace/plans/index|Plans]] · [[workspace/insights/index|Insights]] · [[wiki/index|Wiki]] · [[workspace/overview/home|Home]]"},
+		{"id":"overview-header","type":"text","x":0,"y":0,"width":1000,"height":100,"color":"6","text":"# Workspace Overview\n[[workspace/daily/_Index|Daily]] · [[workspace/tasks/_Index|Tasks]] · [[workspace/themes/_Index|Themes]] · [[workspace/plans/_Index|Plans]] · [[workspace/insights/_Index|Insights]] · [[wiki/index|Wiki]] · [[workspace/overview/home|Home]]"},
 		{"id":"overview-today","type":"file","x":0,"y":120,"width":580,"height":460,"color":"4","file":"workspace/overview/today.md"},
 		{"id":"overview-calendar","type":"file","x":600,"y":120,"width":400,"height":460,"color":"5","file":"workspace/overview/calendar.md"},
 		{"id":"overview-todo","type":"file","x":0,"y":600,"width":580,"height":390,"color":"2","file":"workspace/overview/todo.md"},

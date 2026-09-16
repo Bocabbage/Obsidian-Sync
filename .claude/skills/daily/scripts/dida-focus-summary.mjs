@@ -2,7 +2,8 @@
 
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
 const DIDA_URL_RE =
   /https:\/\/(?:www\.)?dida365\.com\/webapp\/#p\/([0-9a-f]{24})\/tasks\/([0-9a-f]{24})/gi;
@@ -16,7 +17,7 @@ function usage() {
   return [
     "Usage:",
     "  node dida-focus-summary.mjs --file <daily.md> [--date YYYY-MM-DD]",
-    "       [--format markdown|json] [--dida-bin <path>]",
+    "       [--format markdown|json|snapshot] [--dida-bin <path>] [--refresh-mappings]",
   ].join("\n");
 }
 
@@ -27,7 +28,9 @@ function parseArgs(argv) {
     const arg = argv[index];
     const value = argv[index + 1];
 
-    if (arg === "--file" && value) {
+    if (arg === "--refresh-mappings") {
+      options.refreshMappings = true;
+    } else if (arg === "--file" && value) {
       options.file = value;
       index += 1;
     } else if (arg === "--date" && value) {
@@ -50,8 +53,8 @@ function parseArgs(argv) {
   if (!options.file) {
     throw new Error("--file is required");
   }
-  if (!["markdown", "json"].includes(options.format)) {
-    throw new Error("--format must be markdown or json");
+  if (!["markdown", "json", "snapshot"].includes(options.format)) {
+    throw new Error("--format must be markdown, json, or snapshot");
   }
   return options;
 }
@@ -245,17 +248,85 @@ function directDidaTasks(sectionText) {
   return tasks;
 }
 
-function extractDidaTasks(markdown, dailyFile) {
+export function extractDidaTasks(markdown, dailyFile) {
   const sectionText = extractTaskSections(markdown);
   const byTaskId = new Map();
 
   for (const task of taskEntityDidaTasks(sectionText, dailyFile)) {
-    byTaskId.set(task.taskId, task);
+    const existing = byTaskId.get(task.taskId);
+    if (existing) existing.candidates.push(task);
+    else byTaskId.set(task.taskId, { ...task, candidates: [task] });
   }
   for (const task of directDidaTasks(sectionText)) {
-    if (!byTaskId.has(task.taskId)) byTaskId.set(task.taskId, task);
+    if (!byTaskId.has(task.taskId)) byTaskId.set(task.taskId, { ...task, candidates: [] });
   }
-  return [...byTaskId.values()];
+  return [...byTaskId.values()].map((task) => {
+    if (task.candidates.length <= 1) return task;
+    const { localPath, localTaskId, ...shared } = task;
+    return { ...shared, fallbackTitle: "共享 DIDA 来源（待归属）" };
+  });
+}
+
+export function savedMappings(markdown, date, refresh = false) {
+  const blocks = [...markdown.matchAll(/<!-- dida-focus:start -->([\s\S]*?)<!-- dida-focus:end -->/g)];
+  const starts = (markdown.match(/<!-- dida-focus:start -->/g) ?? []).length;
+  const ends = (markdown.match(/<!-- dida-focus:end -->/g) ?? []).length;
+  if (starts !== ends || starts > 1 || blocks.length !== starts) {
+    throw new Error("Invalid or duplicate dida-focus markers; preserve the existing summary");
+  }
+  if (refresh) return null;
+  const body = blocks[0]?.[1]?.trim() ?? "";
+  const snapshots = [
+    ...body.matchAll(/%% dida-focus:snapshot (.*?) %%/g),
+    ...body.matchAll(/<!-- dida-focus:snapshot (.*?) -->/g),
+  ];
+  if (snapshots.length > 1) throw new Error("Duplicate focus snapshots");
+  if (!snapshots.length) {
+    if (body.replace(/<!--[\s\S]*?-->|%%[\s\S]*?%%/g, "").trim()) {
+      throw new Error("Legacy focus summary has no mapping snapshot; review it before using --refresh-mappings");
+    }
+    return null;
+  }
+  const saved = JSON.parse(snapshots[0][1]);
+  if (saved.version !== 1 || saved.date !== date || !Array.isArray(saved.mappings)) {
+    throw new Error("Focus snapshot version/date/mappings mismatch");
+  }
+  if (!saved.mappings.every((task) => /^[0-9a-f]{24}$/.test(task.taskId) &&
+      Array.isArray(task.candidates) && task.candidates.every((candidate) =>
+        candidate.taskId === task.taskId && /^workspace\/tasks\/TASK-\d{6}-\d{3}$/.test(candidate.localPath)))) {
+    throw new Error("Invalid saved DIDA mapping");
+  }
+  return saved.mappings;
+}
+
+export function snapshotPathFor(dailyFile, date) {
+  const root = vaultRootFor(dailyFile);
+  return join(
+    root,
+    "workspace/daily/_meta/focus",
+    date.slice(0, 4),
+    date.slice(0, 7),
+    date + ".dida-focus.md",
+  );
+}
+
+function parseSnapshotMarkdown(markdown, date) {
+  const codeBlocks = [...markdown.matchAll(/```json\r?\n([\s\S]*?)\r?\n```/g)];
+  if (codeBlocks.length !== 1) {
+    throw new Error("Daily focus snapshot must contain exactly one JSON code block");
+  }
+  const saved = JSON.parse(codeBlocks[0][1]);
+  if (saved.version !== 1 || saved.date !== date || !Array.isArray(saved.mappings)) {
+    throw new Error("Focus snapshot version/date/mappings mismatch");
+  }
+  return saved;
+}
+
+export function savedSnapshotMappings(dailyFile, date, refresh = false) {
+  if (refresh) return null;
+  const path = snapshotPathFor(dailyFile, date);
+  if (!existsSync(path)) return null;
+  return parseSnapshotMarkdown(readFileSync(path, "utf8"), date).mappings;
 }
 
 function runDidaJson(binary, args) {
@@ -302,19 +373,11 @@ function durationSeconds(record) {
     return 0;
   }
 
-  const start = Date.parse(record.startTime ?? "");
-  const end = Date.parse(record.endTime ?? "");
-  if (Number.isFinite(start) && Number.isFinite(end) && end > start) {
-    const wallMilliseconds = end - start;
-    const millisecondError = Math.abs(raw - wallMilliseconds);
-    const secondError = Math.abs(raw * 1000 - wallMilliseconds);
-    return millisecondError <= secondError ? raw / 1000 : raw;
-  }
-
-  return raw >= 100_000 ? raw / 1000 : raw;
+  // The focus contract uses milliseconds, including short records without timestamps.
+  return raw / 1000;
 }
 
-function uniqueRecords(records, focusType) {
+export function uniqueRecords(records, focusType) {
   const unique = new Map();
   for (const record of records) {
     const key = focusType + ":" + (record.id ?? JSON.stringify(record));
@@ -377,7 +440,7 @@ function taskMatches(record, taskId) {
   return associatedTaskIds(record).has(taskId);
 }
 
-function buildSummary(tasks, pomodoroRecords, timingRecords, binary) {
+export function buildSummary(tasks, pomodoroRecords, timingRecords, binary) {
   const linkedIds = new Set(tasks.map((task) => task.taskId));
   const matchedUnion = new Map();
 
@@ -395,12 +458,27 @@ function buildSummary(tasks, pomodoroRecords, timingRecords, binary) {
     [...associatedTaskIds(record)].some((id) => linkedIds.has(id)),
   );
 
+  // Count every record once. Ambiguous sources stay visible but have no Task owner.
+  const records = [...matchedUnion.values()].map((record) => {
+    const sources = tasks.filter((task) => taskMatches(record, task.taskId));
+    const unambiguous = sources.length === 1 && sources[0].candidates.length <= 1;
+    return {
+      key: record._recordKey,
+      focusType: record._focusType,
+      seconds: durationSeconds(record),
+      didaTaskIds: sources.map((task) => task.taskId),
+      localPaths: [...new Set(sources.flatMap((task) => task.candidates.map((item) => item.localPath)))],
+      attribution: unambiguous ? (sources[0].localPath ? "local" : "external") : "unallocated",
+    };
+  });
+  const unallocatedKeys = new Set(records.filter((record) => record.attribution === "unallocated").map((record) => record.key));
+
   const taskSummaries = tasks.map((task) => {
     const taskPomodoro = pomodoroRecords.filter((record) =>
-      taskMatches(record, task.taskId),
+      taskMatches(record, task.taskId) && !unallocatedKeys.has(record._recordKey),
     );
     const taskTiming = timingRecords.filter((record) =>
-      taskMatches(record, task.taskId),
+      taskMatches(record, task.taskId) && !unallocatedKeys.has(record._recordKey),
     );
     const focusTitle =
       [...taskPomodoro, ...taskTiming]
@@ -408,7 +486,7 @@ function buildSummary(tasks, pomodoroRecords, timingRecords, binary) {
         .find(Boolean) ?? "";
 
     let title = task.localPath ? task.fallbackTitle : focusTitle;
-    if (!task.localPath) {
+    if (!task.localPath && task.candidates.length === 0) {
       try {
         const detail = runDidaJson(binary, [
           "task",
@@ -433,6 +511,7 @@ function buildSummary(tasks, pomodoroRecords, timingRecords, binary) {
       pomodoroSeconds: sumDuration(taskPomodoro),
       timingSeconds: sumDuration(taskTiming),
       totalSeconds: sumDuration([...taskPomodoro, ...taskTiming]),
+      unallocatedSeconds: records.filter((record) => record.attribution === "unallocated" && record.didaTaskIds.includes(task.taskId)).reduce((sum, record) => sum + record.seconds, 0),
     };
   });
 
@@ -443,18 +522,24 @@ function buildSummary(tasks, pomodoroRecords, timingRecords, binary) {
     pomodoroSeconds: sumDuration(matchedPomodoro),
     timingSeconds: sumDuration(matchedTiming),
     tasks: taskSummaries,
+    records,
+    unallocatedSeconds: records.filter((record) => record.attribution === "unallocated").reduce((sum, record) => sum + record.seconds, 0),
   };
 }
 
-function renderMarkdown(summary) {
+export function renderMarkdown(summary) {
+  const warnings = (summary.mappingWarnings ?? []).map((warning) => "- ⚠️ " + warning);
   if (summary.linkedTaskCount === 0) {
     return [
       "- 关联任务合计：0m",
       "- 未找到 Task Entity 上的 DIDA 映射或 Daily 直接 DIDA 链接。",
+      ...warnings,
     ].join("\n");
   }
 
   const lines = [
+    ...warnings,
+    "- 统计日期：" + summary.date + "（Asia/Shanghai；当日归属快照）",
     "- 关联任务合计：" + formatDuration(summary.totalSeconds),
     "- 番茄钟：" +
       summary.pomodoroCount +
@@ -480,17 +565,67 @@ function renderMarkdown(summary) {
 
     const suffix = details.length > 0 ? "（" + details.join("；") + "）" : "";
     const source = task.localPath ? " · [DIDA](" + task.url + ")" : "";
-    lines.push("  - " + taskIdentity(task) + "：" + formatDuration(task.totalSeconds) + suffix + source);
+    if (task.candidates.length > 1) {
+      const candidates = task.candidates.map((item) => "[[" + item.localPath + "|" + item.localTaskId + "]]").join("、");
+      lines.push("  - [共享 DIDA 来源](" + task.url + ")：待归属 · 候选 " + candidates);
+    } else {
+      lines.push("  - " + taskIdentity(task) + "：" + formatDuration(task.totalSeconds) + suffix + source +
+        (task.unallocatedSeconds > 0 ? "（另有共享记录，未计入本任务）" : ""));
+    }
   }
 
+  if (summary.unallocatedSeconds > 0 || summary.tasks.some((task) => task.candidates.length > 1)) {
+    lines.push("- 待归属：" + formatDuration(summary.unallocatedSeconds) + "（已计入合计一次，未计入任何任务小计；不自动平分）");
+    for (const record of summary.records.filter((item) => item.attribution === "unallocated")) {
+      lines.push("  - `" + record.key + "`：" + formatDuration(record.seconds) + " · DIDA " + record.didaTaskIds.join("、"));
+    }
+  }
   return lines.join("\n");
+}
+
+export function renderSnapshotMarkdown(summary, dailyFile) {
+  const root = vaultRootFor(dailyFile);
+  const dailyPath = relative(root, resolve(dailyFile)).replaceAll("\\", "/").replace(/\.md$/, "");
+  const snapshot = JSON.stringify({
+    version: 1,
+    date: summary.date,
+    timeZone: "Asia/Shanghai",
+    mappings: summary.mappings,
+    records: summary.records,
+  }, null, 2).replaceAll("<", "\\u003c").replaceAll(">", "\\u003e");
+  return [
+    "---",
+    "type: daily-focus-snapshot",
+    "date: " + summary.date,
+    'daily: "[[' + dailyPath + ']]"',
+    "---",
+    "",
+    "# DIDA Focus Snapshot",
+    "",
+    "```json",
+    snapshot,
+    "```",
+  ].join("\n");
 }
 
 function main() {
   const options = parseArgs(process.argv.slice(2));
   const markdown = readFileSync(options.file, "utf8");
   const date = extractDate(markdown, options.date, options.file);
-  const tasks = extractDidaTasks(markdown, options.file);
+  const saved = savedSnapshotMappings(options.file, date, options.refreshMappings) ??
+    savedMappings(markdown, date, options.refreshMappings);
+  const tasks = saved || extractDidaTasks(markdown, options.file);
+  const mappingWarnings = [];
+  if (saved) {
+    const identity = (items) => JSON.stringify(items.map((item) => [item.taskId, item.candidates.map((candidate) => candidate.localPath).sort()]).sort());
+    try {
+      if (identity(saved) !== identity(extractDidaTasks(markdown, options.file))) {
+        mappingWarnings.push("当前任务区或 DIDA 映射与已存快照不同；本次保留原归属。请核对新增/移除任务后明确使用 --refresh-mappings，勿直接认作本日完整归属。");
+      }
+    } catch {
+      mappingWarnings.push("无法核验当前 Task 映射；本次沿用 Daily 已存归属，请复核后再纠正。");
+    }
+  }
   const from = date + "T00:00:00+08:00";
   const to = nextDate(date) + "T00:00:00+08:00";
 
@@ -539,19 +674,25 @@ function main() {
     timeZone: "Asia/Shanghai",
     from,
     to,
+    mappings: tasks,
+    mappingWarnings,
     ...summary,
   };
 
   if (options.format === "json") {
     process.stdout.write(JSON.stringify(output, null, 2) + "\n");
+  } else if (options.format === "snapshot") {
+    process.stdout.write(renderSnapshotMarkdown(output, options.file) + "\n");
   } else {
     process.stdout.write(renderMarkdown(output) + "\n");
   }
 }
 
-try {
-  main();
-} catch (error) {
-  process.stderr.write(error.message + "\n");
-  process.exit(1);
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+  try {
+    main();
+  } catch (error) {
+    process.stderr.write(error.message + "\n");
+    process.exit(1);
+  }
 }

@@ -2,7 +2,7 @@
 type: schema
 schema: page-type
 page_type: period-plan
-updated: 2026-09-12
+updated: 2026-09-14
 ---
 
 # Period Plan
@@ -40,6 +40,6 @@ next_review:
 ## 层级职责
 
 - Weekly 汇总自上次 Review 以来的推进、学习、反复问题、Theme 与 Insight，不强求完成率。
-- Monthly 从 Theme 中选择少量阶段结果，连接 Task 和预期产物，并记录“想做但没有排上”的事项。
+- Monthly 从用户认可的 Theme 或独立 Task 中选择少量阶段结果，连接执行与预期产物，并记录“想做但没有排上”的事项；Theme 不是必填上级。
 - Quarterly 只表达方向、投入边界和判断标准，不复制月度或 Task 清单。
 - 一个 Task 可以关联多个周期，但全局状态仍只保存在 Task Entity。

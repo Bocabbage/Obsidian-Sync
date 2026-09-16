@@ -1,12 +1,12 @@
 ---
 type: workspace-index
 workspace_type: themes
-updated: 2026-09-12
+updated: 2026-09-14
 ---
 
 # Themes
 
-Theme 是尚在形成中的持续关注，不是 Wiki 目录或任务列表。创建规则见 [[schema/page-types/theme|Theme Schema]]。
+Theme 是你主动设立、用于指导任务的持续研究或学习方向，不是自动提炼的项目分类。Agent 可以建议，但未经你确认不会创建（包括 seed）。创建规则见 [[schema/page-types/theme|Theme Schema]]。
 
 ## 当前关注
 

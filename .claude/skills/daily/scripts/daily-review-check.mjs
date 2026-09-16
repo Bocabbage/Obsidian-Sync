@@ -52,6 +52,10 @@ function taskLines(markdown) {
       continue;
     }
     if (!section) continue;
+    if (/^#{3,6}\s+/.test(line)) {
+      topLevelOwner = false;
+      continue;
+    }
 
     const match = line.match(/^(\s*)-\s*\[([ xX\/\->])\]\s*(.*)$/);
     if (!match) continue;

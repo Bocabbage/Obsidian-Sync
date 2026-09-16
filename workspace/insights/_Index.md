@@ -1,7 +1,7 @@
 ---
 type: workspace-index
 workspace_type: insights
-updated: 2026-09-12
+updated: 2026-09-14
 ---
 
 # Insights

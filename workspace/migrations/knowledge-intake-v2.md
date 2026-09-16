@@ -2,10 +2,12 @@
 type: migration
 status: complete
 created: 2026-09-12
-updated: 2026-09-12
+updated: 2026-09-14
 ---
 
 # Knowledge Intake v2 Migration
+
+> 2026-09-14 纠偏：下面保留 9 月 12 日的实施历史；其中由 Daily 自动建立 active Theme 的做法已撤销，现行规则要求用户明确设立或确认。Lain 可靠性与来源表预览两个页面已转为 Task 关联草稿，详见 [[workspace/migrations/theme-task-boundaries-2026-09-14|本轮改造记录]]。
 
 ## 范围
 

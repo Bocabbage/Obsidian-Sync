@@ -1,7 +1,7 @@
 ---
 type: schema
 schema: properties
-updated: 2026-09-12
+updated: 2026-09-14
 ---
 
 # Properties 规范
@@ -105,7 +105,8 @@ themes: []
 - `task_id` 是 Vault 内部身份，必须与文件名一致并且永不复用。
 - `status` 取值为 `inbox`、`active`、`blocked`、`done` 或 `cancelled`；`priority` 取值为 `high`、`normal` 或 `low`。
 - `due`、`closed` 和 DIDA 映射均为可选字段；DIDA 映射不得覆盖本地身份或状态。
-- `themes` 可选，只保存稳定的 Theme wikilink；临时上下文继续留在正文。
+- `themes` 可选，只保存用户已设立的稳定 Theme wikilink；允许多对多或为空，临时上下文继续留在正文。关联不等于活动或工时的独占归属。
+- `dida_task_id` 不要求在本地 Task 间唯一，不用于归并 Task；专注按 Daily 日期保存归属，见 Task Entity 与 Daily Workflow。
 - 完整生命周期与 occurrence 语法见 [[schema/page-types/task|Task Entity]]。
 
 ### Daily

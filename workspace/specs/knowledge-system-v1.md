@@ -88,7 +88,7 @@ Daily 不再只是 `workspace/plans/` 下的任务表，而是一类独立的 Wo
 - [[schema/page-types/daily|Daily page type]]、[[schema/templates/daily-template|模板]]和 [[schema/workflows/daily|workflow]]。
 - Workspace 路由、Properties 与视图规范。
 - `.agents` / `.claude` 同步的 `daily` Skill 及只读 DIDA focus 聚合脚本。
-- `workspace/daily/index.md` 总览，为后续 Canvas 提供稳定入口。
+- `workspace/daily/_Index.md` 总览，为后续 Canvas 提供稳定入口。
 
 ### 验收
 

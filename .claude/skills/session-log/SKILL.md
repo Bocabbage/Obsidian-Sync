@@ -62,4 +62,4 @@ updated: 2026-08-25 11:00
 - 关闭时将 `status` 改为 `closed`；旧格式文件则将顶部状态改为“已关闭”。
 - 如果文件已关闭，不重复关闭；用户继续同一议题时可以新建会话，不把历史记录重新设为 active。
 - 会话中的 Wiki ingest、compile 或 lint 操作另追加到 `wiki/_meta/log.md`。
-- `workspace/sessions/index.md` 通过 Dataview 自动索引会话，不需要在创建或关闭时手工维护列表。
+- `workspace/sessions/_Index.md` 通过 Dataview 自动索引会话，不需要在创建或关闭时手工维护列表。

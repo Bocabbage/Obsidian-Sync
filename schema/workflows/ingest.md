@@ -2,12 +2,14 @@
 type: schema
 schema: workflow
 workflow: ingest
-updated: 2026-09-12
+updated: 2026-09-16
 ---
 
 # Ingest Workflow
 
 Ingest 将一个 Raw 来源纳入可持续维护的 Wiki，但不改写 Raw 本身。
+
+仅把对话/资料捕获到 Raw 时，执行对应 source adapter 即可；不要求为一次捕获同时建立 Wiki 页面或写入 Wiki 操作日志。
 
 ## 流程
 

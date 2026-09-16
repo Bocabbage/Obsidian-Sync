@@ -10,7 +10,7 @@ updated: 2026-09-12
 - `sessions/`：Agent 会话摘要。
 - `plans/`：Weekly、Monthly 与 Quarterly 的选择和复盘。
 - `tasks/`：需要跨日承接、独立统计或稳定外部映射的 Task Entity；当天 occurrence 继续写入 Daily。
-- `themes/`：持续关注的问题、线索、暂定理解和投入判断。
+- `themes/`：你主动设立、用于指导任务的持续研究或学习方向；Agent 仅建议，不自动创建。
 - `insights/`：按月保存、值得以后重读的独立想法。
 - `specs/`：已经形成共识、但尚未全部实现的系统演进规格。
 - `migrations/`：一次性结构迁移清单和进度。

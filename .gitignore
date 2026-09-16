@@ -27,6 +27,11 @@
 !/schema/
 !/schema/**
 
+# Raw governance only; all source material and attachments stay OneDrive-only.
+!/raws/
+raws/*
+!/raws/AGENTS.md
+
 # Workspace framework, approved specs and migration control records
 !/workspace/
 workspace/*
@@ -43,22 +48,22 @@ workspace/drafts/*
 !/workspace/plans/
 workspace/plans/*
 !/workspace/plans/README.md
-!/workspace/plans/index.md
+!/workspace/plans/_Index.md
 !/workspace/daily/
 workspace/daily/*
-!/workspace/daily/index.md
+!/workspace/daily/_Index.md
 !/workspace/tasks/
 workspace/tasks/*
-!/workspace/tasks/index.md
+!/workspace/tasks/_Index.md
 !/workspace/themes/
 workspace/themes/*
-!/workspace/themes/index.md
+!/workspace/themes/_Index.md
 !/workspace/insights/
 workspace/insights/*
-!/workspace/insights/index.md
+!/workspace/insights/_Index.md
 !/workspace/sessions/
 workspace/sessions/*
-!/workspace/sessions/index.md
+!/workspace/sessions/_Index.md
 !/workspace/overview.canvas
 !/workspace/overview/
 !/workspace/overview/**

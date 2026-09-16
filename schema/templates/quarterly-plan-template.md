@@ -17,7 +17,8 @@ next_review:
 ### Direction 1
 
 - 为什么值得投入：
-- Themes：
+- Themes（可选）：
+- 执行入口（Monthly / Task）：
 - 投入边界：
 - 季末判断标准：
 

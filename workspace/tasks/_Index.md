@@ -1,7 +1,7 @@
 ---
 type: workspace-index
 status: active
-updated: 2026-08-28
+updated: 2026-09-14
 ---
 
 # Tasks

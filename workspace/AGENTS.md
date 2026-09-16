@@ -8,6 +8,7 @@
 - 人工阅读笔记写入 `workspace/reading/books/`，个人观影记录写入 `workspace/viewing/`；Douban 已有目录状态且没有额外人工内容时不建立空壳页。
 - Daily 以“跨日任务”保存 Task Entity 的当天 occurrence，以“当日任务”保存无需建页的一次性事项；跨日、需统计或带稳定 DIDA 映射的事项使用 Task Entity，同一实体在多日重复引用。`/daily-review` 先收口当日 occurrence，再生成关联任务的当天专注汇总。详细规则见 `schema/workflows/daily.md`。
 - `workspace/specs/` 保存已形成共识但尚未生效的实施规格；Spec 提升到 Schema 前不得当作当前规则执行。
-- Theme 保存尚在形成的问题与理解，可以被 Plan 选中并逐步产出 Wiki；Insight 按月保存可独立重读的想法，两者都不自动成为任务或知识事实。
+- Theme 由用户设立或明确确认后创建，用来指导任务并积累问题、理解和成果；Agent 只建议，不从工作反复出现自动创建或激活。Task 与 Theme 可多对多或不关联，Daily 无需逐动作标 Theme。Insight 按月保存可独立重读的想法。
+- Workspace 的导航索引统一命名 `_Index.md`，保留 `type: workspace-index`，不当作实体正文；Wiki 和插件来源目录不随之改名。
 - Homepage 使用 `workspace/overview/home.md` 自动启动，并以 `workspace/overview.canvas` 提供手动视觉布局；两者共用 `workspace/overview/` 查询组件，只聚合现有事实。
 - 值得长期复用的结论通过 compile 进入 Wiki，不直接移动整份过程记录。

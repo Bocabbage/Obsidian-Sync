@@ -1,7 +1,7 @@
 ---
 type: workspace-index
 workspace_type: sessions
-updated: 2026-09-12
+updated: 2026-09-14
 ---
 
 # Sessions
@@ -15,6 +15,7 @@ TABLE WITHOUT ID
   started AS "开始",
   updated AS "更新"
 FROM "workspace/sessions"
+WHERE type = "session" OR (file.ext = "md" AND contains(file.name, ".session"))
 SORT updated DESC, started DESC
 LIMIT 30
 ```

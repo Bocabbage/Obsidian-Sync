@@ -15,7 +15,7 @@
 
 | 路径 | 角色 | 默认读取 | 默认写入 |
 |---|---|---:|---:|
-| `raws/` | 外部来源与同步数据 | 是 | 否 |
+| `raws/` | 可追溯的来源材料与同步数据 | 是 | 默认否；授权捕获见下文 |
 | `raws/Douban/_assets/` | Douban 封面缓存 | 按需 | 否 |
 | `workspace/` | 会话、计划、草稿、迁移和待办 | 按需 | 是 |
 | `wiki/` | 人和 Agent 可读的 compiled knowledge | 是 | 是 |
@@ -29,7 +29,7 @@
 ## 核心原则
 
 - Markdown 是持久事实来源，不把唯一数据只存进插件视图、缓存或聊天历史。
-- Raw 保留来源原貌；Workspace 保存过程；Wiki 保存长期成果；Schema 保存规则。
+- Raw 保留可追溯的来源材料（原文或忠实整理的捕获）；Workspace 保存持续演进的过程；Wiki 保存编译成果；Schema 保存规则。
 - Wiki 内容必须区分来源事实、用户判断和 Agent 推断，并保持可追溯的来源链。
 - 使用 `[[wikilinks]]` 连接页面，存在同名风险时使用完整 vault 路径和显示别名。
 - YAML 放在文件开头，只保存稳定、可筛选或可校验的字段；具体规则见 `schema/properties.md`。
@@ -40,6 +40,7 @@
 | 任务 | 必读规则 | 主要输出 |
 |---|---|---|
 | 导入一个来源 | `schema/workflows/ingest.md` + 对应 source adapter | `wiki/sources/`、相关领域页、Wiki Log |
+| 捕获对话素材（不等于 Wiki ingest） | `schema/page-types/raw-source.md` + `schema/sources/codex.md`（Codex 来源） | 经用户授权的 `raws/Codex/` 捕获 |
 | 编译或重组知识 | `schema/workflows/compile.md` + domain schema | Wiki concept/entity/map/synthesis |
 | 基于知识库回答 | `schema/workflows/query.md` | 对话答案；必要时保存 synthesis |
 | 健康检查 | `schema/workflows/lint.md` | `wiki/_meta/lint-report.md` |
@@ -47,12 +48,16 @@
 | 会话记录 | `schema/workflows/session.md` + `session-log` Skill | `workspace/sessions/` |
 | Daily / Task 创建与复盘 | `schema/workflows/daily.md` + `daily` Skill | `workspace/daily/`、`workspace/tasks/` |
 | 零碎记录分流 | `schema/workflows/knowledge-intake.md` | `workspace/themes/`、`workspace/insights/`、Wiki |
+| 用户设立或维护 Theme | `schema/page-types/theme.md` + `schema/workflows/knowledge-intake.md` | 经用户确认的 Theme、相关 Task 链接与成果 |
 | 周/月/季度计划复盘 | `schema/workflows/periodic-review.md` + 对应 Skill | `workspace/plans/` |
 | 书籍与影视目录 | `schema/workflows/media-catalog.md` + source adapters | `wiki/sources/*/index.md` |
 | Homepage / Canvas | `schema/workflows/homepage.md` + `schema/views.md` | `workspace/overview/home.md` + `workspace/overview.canvas` |
 
 ## Raw 与来源
 
+- 用户明确要求保存某次对话/资料为来源材料时，Agent 可按对应 adapter 新建 Raw；这不授权改写既有 Raw 或插件文件。捕获后默认只读。
+- AI 对话可以按概念、问答、列表或表格忠实整理，不要求完整逐字导出；必须保留范围、来源、说话者和未验证边界，不把捕获时新生成的解释混入原对话。
+- 持续改写的个人理解留 Workspace，跨来源知识综合进入 Wiki；`workspace/sessions/` 保存操作摘要，不替代学习对话素材。Theme 从正文链接 Raw，不把可变 Theme/学习状态回写 Raw。
 - `raws/Douban/`、`raws/Douban/_assets/` 和 `raws/WeRead/` 由同步插件维护，Agent 默认不得手工改写。
 - Web 剪藏按 `raws/Web/{年份}/YYYY-MM/` 保存，日期负责分片，来源标签只作宽松元数据；领域与 Theme 判断不回写 Raw。
 - 不在插件文件中增加跨来源链接；Douban 与 WeRead 的自动关系由目录视图推导，例外覆盖写入 `wiki/sources/link-overrides/`。
@@ -75,6 +80,8 @@
 - DIDA 是 Task Entity 或 Daily 的可选外部映射与专注来源；不自动拉取今日任务，也不使用 DIDA 整体状态覆盖本地 Task 或当天 Checkbox。
 - 一次性迁移进度写入 `workspace/migrations/`，后续事项写入 `workspace/backlog.md`。
 - Workspace 内容只有经过 compile 才进入 Wiki。
+- Theme 由用户主动设立并指导 Task；Agent 只能建议新方向，未经明确确认不得建页（包括 seed），一般性整理/迁移授权也不例外。Task 可以没有 Theme。
+- 多个本地 Task 可共用 DIDA 计时来源；不按 DIDA ID 合并 Task，按 Daily 保存当天专注归属，不推导精确 Theme 工时。
 
 ## Legacy 与 Archived
 

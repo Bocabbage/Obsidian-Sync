@@ -2,7 +2,7 @@
 type: schema
 schema: workflow
 workflow: compile
-updated: 2026-09-12
+updated: 2026-09-14
 ---
 
 # Compile Workflow
@@ -23,7 +23,7 @@ Compile 将 Raw、Theme、其他 Workspace 材料或 Wiki Legacy 整理为可复
 ## 渐进编译
 
 - Theme 可以只编译其中一个已经成熟的问题，其余内容继续留在 Workspace。
-- Theme 的“当前理解”不能替代一手来源；Wiki 结论仍需链接 Raw、来源页或明确标注为个人判断。
+- Theme 中积累的暂定理解不能替代一手来源；Wiki 结论仍需链接 Raw、来源页或明确标注为个人判断。
 - 涉及代码或产品行为时保留版本、提交或来源日期，不能把某一时点观察写成永久规则。
 - 一个主题需要输出到 Wiki、项目文档或其他系统时，各目标分别记录结果，不能用其中一个完成状态代替全部。
 

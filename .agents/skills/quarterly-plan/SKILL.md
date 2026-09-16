@@ -18,10 +18,12 @@ workspace/plans/{YYYY}/quarterly/{YYYY}-Q{n}.md
 ## 创建或更新
 
 - 先读取前一季度、当前 Monthly Plan、active / seed Theme 和活跃 Task，只把它们作为选择证据。
-- 每个方向说明为什么值得投入、关联 Theme、明确不投入什么，以及季末用什么证据判断是否推进。
+- 每个方向说明为什么值得投入、可选的关联 Theme、明确不投入什么，以及季末用什么证据判断是否推进；独立事务可直接连接 Monthly / Task。
 - 具体事项连接到 Monthly Plan 或本地 Task；DIDA 链接继续保存在 Task Entity。
 - 旧 YEC、SGT、MBE、BBR、SBK 分类或旧计划 ID 只作为 Archived 历史，不在新页中延续。
 - 缺少足够目标信息时建立 status: draft，并明确哪些内容来自现有记录；不要替用户虚构承诺。
+- Theme 由用户设立，Review 只能建议；未经明确确认不创建、拆分或激活（包括 seed），一般迁移授权不例外。
+- 方向进展看相关发现和成果，不以 Task 全部活动/时长代替；工时仅消费 Daily 保存的归属快照，缺失和待归属单列，不重算长期 DIDA 映射。
 
 ## 季度复盘
 

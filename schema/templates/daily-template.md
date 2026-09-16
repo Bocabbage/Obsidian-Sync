@@ -6,11 +6,11 @@ status: open
 
 # {{date:YYYY-MM-DD}}
 
-> [[workspace/daily/index|📅 Daily 总览]]
+> [[workspace/daily/_Index|📅 Daily 总览]]
 
 ## 任务池
 
-> [[workspace/tasks/index|查看全部 Tasks]] · 截至本页日期仍未全局闭环的 Task；只把今天实际推进的 Task 作为 occurrence 放入“跨日任务”。
+> [[workspace/tasks/_Index|查看全部 Tasks]] · 截至本页日期仍未全局闭环的 Task；只把今天实际推进的 Task 作为 occurrence 放入“跨日任务”。
 
 ```dataview
 TABLE WITHOUT ID
@@ -26,11 +26,26 @@ SORT choice(priority = "high", 1, choice(priority = "normal", 2, 3)) ASC, update
 
 ## 跨日任务
 
+> [!note] 今日心情
+>
+
 ### 1. 高优先级
+
+#### WORK
+
+#### LIFE
 
 ### 2. 低优先级
 
+#### WORK
+
+#### LIFE
+
 ## 当日任务
+
+### WORK
+
+### LIFE
 
 ## 产生的材料
 

@@ -19,7 +19,7 @@ description: 在本 Obsidian Vault 创建或更新轻量 Weekly / Monthly Plan �
 
 路径为 workspace/plans/{YYYY}/monthly/{YYYY-MM}.md，使用 monthly-plan-template.md。
 
-- 从 Theme 中选择少量阶段结果，每项连接 Theme、Task 与可验证产物。
+- 按用户选择，从已认可的 Theme 或独立 Task 中安排少量阶段结果；连接执行与可验证产物，Theme 可选，不为配对补建。
 - 明确“想做但未排上”和计划外工作，避免把愿望全部伪装成承诺。
 - 月末在同一页复盘实际结果、知识与 Insight、取舍和下月选择。
 
@@ -27,4 +27,6 @@ description: 在本 Obsidian Vault 创建或更新轻量 Weekly / Monthly Plan �
 
 - 日常执行状态只更新 Task Entity；周期页只引用，不复制 DIDA 任务树。
 - 证据不足时保持 status: draft，不推断用户未表达的目标或完成状态。
-- Review 可以提出新 Theme 或拆分建议，但不把一次出现的关键词自动提升为 Theme。
+- Review 只能建议新 Theme 或拆分，须用户明确确认后执行（包括 seed）；一般整理授权、重复工作或 Plan 草案不代表创建/激活许可。
+- Theme 汇总相关问题、理解和成果，不复制 Task 进度或把全部活动视为主题贡献；Daily 不要求动作级 Theme 标记。
+- 工时读取 `workspace/daily/_meta/focus/` 的每日映射与 focus 记录快照，按日期与记录键去重；待归属单列，缺快照不当作零，不用当前映射重算历史或把季度 DIDA 总量重复分配，不推导精确 Theme 工时。

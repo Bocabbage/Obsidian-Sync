@@ -1,7 +1,7 @@
 ---
 type: schema-index
 schema_version: 1
-updated: 2026-09-12
+updated: 2026-09-15
 ---
 
 # 知识库 Schema
@@ -25,7 +25,7 @@ updated: 2026-09-12
 - [[schema/version-control|Git 与 OneDrive]]：开发资产白名单、内容同步边界和提交规则。
 - `page-types/`：Raw、Workspace、Daily、Task Entity、Theme、Insight Log、Period Plan、Reading Note、Viewing Note、Source Link 和 Wiki 页面类型。
 - `workflows/`：Daily、Knowledge Intake、Periodic Review、Douban 媒体目录、Homepage、ingest、compile、query、lint、会话和 legacy migration。
-- `sources/`：Douban、WeRead、Web 以及跨来源身份匹配。
+- `sources/`：Douban、WeRead、Web、Codex 对话捕获以及跨来源身份匹配。
 - `domains/`：当前已确认 Wiki 领域的补充规则。
 - `templates/`：新建 Wiki 与 Workspace 页面时使用的最小模板。
 
