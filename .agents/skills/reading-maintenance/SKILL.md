@@ -10,11 +10,11 @@ Douban Raw 是唯一书籍目录；WeRead、纸质书或其他人工阅读内容
 ## 必读
 
 - 根 `AGENTS.md`。
-- `schema/ownership.md`。
-- `schema/workflows/media-catalog.md`。
-- `schema/sources/douban.md`、`schema/sources/weread.md` 和 `schema/sources/identity-resolution.md`。
-- `schema/page-types/reading-note.md` 和 `schema/page-types/source-link.md`。
-- 涉及旧内容时再读 `schema/workflows/migrate-legacy.md` 与 `workspace/migrations/legacy-migration.md`。
+- `agents/schema/ownership.md`。
+- `agents/schema/workflows/media-catalog.md`。
+- `agents/schema/sources/douban.md`、`agents/schema/sources/weread.md` 和 `agents/schema/sources/identity-resolution.md`。
+- `agents/schema/page-types/reading-note.md` 和 `agents/schema/page-types/source-link.md`。
+- 涉及旧内容时再读 `agents/schema/workflows/migrate-legacy.md` 与 `agents/migrations/legacy-migration.md`。
 
 ## 正式结构
 

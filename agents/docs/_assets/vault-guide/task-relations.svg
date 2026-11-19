@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1300" viewBox="0 0 1200 1300" data-generator="fireworks-tech-graph" data-quality-profile="showcase">
+<title>方向、任务与当天的执行</title><desc>N:N 表示多对多，允许不关联；连线表示关系，不表示工时分摊。</desc>
+<style>text {font-family:"Heiti SC","PingFang SC","Helvetica Neue",sans-serif;}</style>
+<rect width="1200" height="1300" fill="#fff" data-graph-role="background"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8 Z" fill="#2563eb" data-graph-role="decoration"/></marker></defs>
+<text x="60" y="68" font-size="32" fill="#111827" text-anchor="start" font-weight="600" data-graph-role="label" data-graph-bounds="60.0 36.0 412.0 72.0">方向、任务与当天的执行</text>
+<text x="60" y="110" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="label" data-graph-bounds="60.0 90.0 646.4 114.0">N:N 表示多对多，允许不关联；连线表示关系，不表示工时分摊。</text>
+<rect x="60" y="190" width="360" height="140" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" data-graph-role="node" data-node-id="theme"/>
+<text x="82" y="230" font-size="25" fill="#111827" text-anchor="start" font-weight="600" data-graph-role="decoration" data-graph-bounds="82.0 205.0 323.0 234.0" data-owner="theme">Theme · 方向或事项</text>
+<text x="82" y="268" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="82.0 248.0 302.0 272.0" data-owner="theme">目的、范围、路线与结果</text>
+<text x="82" y="300" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="82.0 280.0 222.0 304.0" data-owner="theme">状态由用户选择</text>
+<rect x="700" y="190" width="360" height="140" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" data-graph-role="node" data-node-id="plan" stroke-dasharray="8 6"/>
+<text x="722" y="230" font-size="25" fill="#111827" text-anchor="start" font-weight="600" data-graph-role="decoration" data-graph-bounds="722.0 205.0 938.0 234.0" data-owner="plan">季度 Plan · 拟议</text>
+<text x="722" y="268" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="722.0 248.0 963.2 272.0" data-owner="plan">本季选择哪些 Theme 阶段</text>
+<text x="722" y="300" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="722.0 280.0 922.0 304.0" data-owner="plan">尚未实施新季度工作流</text>
+<path d="M420 260 L700 260" fill="none" stroke="#2563eb" stroke-width="2" data-graph-role="edge" data-source="theme" data-target="plan" stroke-dasharray="8 6"/>
+<text x="560" y="233" font-size="20" fill="#2563eb" text-anchor="middle" font-weight="400" data-graph-role="label" data-graph-bounds="459.4 213.0 660.6 237.0">拟议 N:N · 季度选择</text>
+<text x="560" y="294" font-size="18" fill="#6b7280" text-anchor="middle" font-weight="400" data-graph-role="label" data-graph-bounds="479.0 276.0 641.0 298.0">虚线仅表示讨论方案</text>
+<rect x="60" y="470" width="360" height="140" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" data-graph-role="node" data-node-id="task"/>
+<text x="82" y="510" font-size="25" fill="#111827" text-anchor="start" font-weight="600" data-graph-role="decoration" data-graph-bounds="82.0 485.0 283.5 514.0" data-owner="task">Task · 持续任务</text>
+<text x="82" y="548" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="82.0 528.0 298.0 552.0" data-owner="task">全局状态与 Task Todo</text>
+<text x="82" y="580" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="82.0 560.0 283.2 584.0" data-owner="task">可独立于 Theme 存在</text>
+<rect x="700" y="470" width="360" height="140" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" data-graph-role="node" data-node-id="dida"/>
+<text x="722" y="510" font-size="25" fill="#111827" text-anchor="start" font-weight="600" data-graph-role="decoration" data-graph-bounds="722.0 485.0 996.0 514.0" data-owner="dida">DIDA Task · 可选来源</text>
+<text x="722" y="548" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="722.0 528.0 842.0 552.0" data-owner="dida">外部任务身份</text>
+<text x="722" y="580" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="722.0 560.0 902.0 584.0" data-owner="dida">番茄、正计时等记录</text>
+<path d="M240 330 L240 470" fill="none" stroke="#2563eb" stroke-width="2" data-graph-role="edge" data-source="theme" data-target="task"/>
+<text x="270" y="408" font-size="21" fill="#2563eb" text-anchor="start" font-weight="400" data-graph-role="label" data-graph-bounds="270.0 387.0 477.1 412.0">N:N · Task.themes</text>
+<path d="M420 540 L700 540" fill="none" stroke="#2563eb" stroke-width="2" data-graph-role="edge" data-source="task" data-target="dida"/>
+<text x="560" y="514" font-size="21" fill="#2563eb" text-anchor="middle" font-weight="400" data-graph-role="label" data-graph-bounds="468.6 493.0 651.3 518.0">N:N · dida_urls</text>
+<rect x="60" y="750" width="360" height="140" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" data-graph-role="node" data-node-id="occ"/>
+<text x="82" y="790" font-size="25" fill="#111827" text-anchor="start" font-weight="600" data-graph-role="decoration" data-graph-bounds="82.0 765.0 232.0 794.0" data-owner="occ">当日执行记录</text>
+<text x="82" y="828" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="82.0 808.0 291.6 832.0" data-owner="occ">Daily 内的事项与文字</text>
+<text x="82" y="860" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="82.0 840.0 202.0 864.0" data-owner="occ">不是独立页面</text>
+<rect x="700" y="750" width="360" height="140" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" data-graph-role="node" data-node-id="daily"/>
+<text x="722" y="790" font-size="25" fill="#111827" text-anchor="start" font-weight="600" data-graph-role="decoration" data-graph-bounds="722.0 765.0 913.0 794.0" data-owner="daily">Daily · 某一天</text>
+<text x="722" y="828" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="722.0 808.0 922.0 832.0" data-owner="daily">安排、经过与当天收口</text>
+<text x="722" y="860" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="722.0 840.0 862.0 864.0" data-owner="daily">保留当时的事实</text>
+<path d="M240 610 L240 750" fill="none" stroke="#2563eb" stroke-width="2" data-graph-role="edge" data-source="task" data-target="occ"/>
+<text x="270" y="688" font-size="21" fill="#2563eb" text-anchor="start" font-weight="400" data-graph-role="label" data-graph-bounds="270.0 667.0 427.1 692.0">1:N · 分日推进</text>
+<path d="M420 820 L700 820" fill="none" stroke="#2563eb" stroke-width="2" data-graph-role="edge" data-source="occ" data-target="daily"/>
+<text x="560" y="795" font-size="20" fill="#2563eb" text-anchor="middle" font-weight="400" data-graph-role="label" data-graph-bounds="465.2 775.0 654.8 799.0">N:1 · 写在当天页内</text>
+<rect x="700" y="1030" width="360" height="140" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" data-graph-role="node" data-node-id="todo"/>
+<text x="722" y="1070" font-size="25" fill="#111827" text-anchor="start" font-weight="600" data-graph-role="decoration" data-graph-bounds="722.0 1045.0 981.5 1074.0" data-owner="todo">Todo Log · 独立小事</text>
+<text x="722" y="1108" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="722.0 1088.0 922.0 1112.0" data-owner="todo">原条目保存安排与完成</text>
+<text x="722" y="1140" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="722.0 1120.0 900.0 1144.0" data-owner="todo">无须单独建立 Task</text>
+<path d="M880 890 L880 1030" fill="none" stroke="#2563eb" stroke-width="2" data-graph-role="edge" data-source="daily" data-target="todo"/>
+<text x="910" y="966" font-size="18" fill="#2563eb" text-anchor="start" font-weight="400" data-graph-role="label" data-graph-bounds="910.0 948.0 1036.0 970.0">显示同一份清单</text>
+<text x="60" y="1048" font-size="21" fill="#111827" text-anchor="start" font-weight="600" data-graph-role="label" data-graph-bounds="60.0 1027.0 396.0 1052.0">实线：现行关系；虚线：拟议关系。</text>
+<text x="60" y="1093" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="label" data-graph-bounds="60.0 1073.0 434.0 1097.0">当天完成 ≠ Task 完成 ≠ Theme 结束</text>
+<text x="60" y="1134" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="label" data-graph-bounds="60.0 1114.0 438.0 1138.0">专注按每日记录去重并归属到本地 Task。</text>
+<text x="60" y="1233" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="label" data-graph-bounds="60.0 1213.0 681.2 1237.0">共享来源保留待归属；不重复计时，也不直接推导精确 Theme 工时。</text>
+</svg>

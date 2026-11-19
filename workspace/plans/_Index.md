@@ -1,12 +1,12 @@
 ---
 type: workspace-index
 workspace_type: plans
-updated: 2026-09-14
+updated: 2026-10-03
 ---
 
 # Plans
 
-Weekly、Monthly 与 Quarterly 使用同一个 Period Plan 模型，在同页保存选择与复盘。
+这里汇总已有的周期计划与复盘。旧草案已清理，目前没有计划正文；列表为空是正常状态。目录说明见 [[workspace/plans/README|Plans]]。
 
 ## 当前周期
 

@@ -1,11 +1,11 @@
 ---
 name: session-log
-description: 在此 Obsidian 知识库中工作时自动激活，将每次会话的任务、结论和待办记录到 workspace/sessions；用户要求保存、关闭或继续会话记录时也使用。
+description: 在此 Obsidian 知识库中工作时自动激活，将每次会话的任务、结论和待办记录到 agents/sessions；用户要求保存、关闭或继续会话记录时也使用。
 ---
 
 # 会话记录
 
-会话摘要属于 Workspace 运行记录，不属于 Schema 或 Wiki。长期知识只有经过 compile 才进入 Wiki。
+会话摘要属于 Agent 运行记录，不属于个人 Workspace 内容、Schema 现行契约或 Wiki 知识。长期知识只有经过 compile 才进入 Wiki。
 
 ## 触发
 
@@ -16,10 +16,10 @@ description: 在此 Obsidian 知识库中工作时自动激活，将每次会话
 ## 存储位置
 
 ```text
-workspace/sessions/{年份}/YYYY-MM/YYYY-MM-DD-{序号}.session.md
+agents/sessions/{年份}/YYYY-MM/YYYY-MM-DD-{序号}.session.md
 ```
 
-例如：`workspace/sessions/2026/2026-08/2026-08-25-01.session.md`。
+例如：`agents/sessions/2026/2026-08/2026-08-25-01.session.md`。
 
 同一会话持续更新同一文件；当天的新会话按现有最大序号加一。Task ID 从 1 开始，仅在当前会话文件内有效。
 
@@ -62,4 +62,4 @@ updated: 2026-08-25 11:00
 - 关闭时将 `status` 改为 `closed`；旧格式文件则将顶部状态改为“已关闭”。
 - 如果文件已关闭，不重复关闭；用户继续同一议题时可以新建会话，不把历史记录重新设为 active。
 - 会话中的 Wiki ingest、compile 或 lint 操作另追加到 `wiki/_meta/log.md`。
-- `workspace/sessions/_Index.md` 通过 Dataview 自动索引会话，不需要在创建或关闭时手工维护列表。
+- `agents/sessions/_Index.md` 通过 Dataview 自动索引会话，不需要在创建或关闭时手工维护列表。

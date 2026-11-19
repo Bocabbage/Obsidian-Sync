@@ -18,7 +18,7 @@ ISBN 完全一致的 WeRead 分支由书籍目录动态推导；不同版本、�
 
 规则见：
 
-- `schema/page-types/wiki-source.md`
-- `schema/page-types/source-link.md`
-- `schema/workflows/media-catalog.md`
-- `schema/sources/identity-resolution.md`
+- `agents/schema/page-types/wiki-source.md`
+- `agents/schema/page-types/source-link.md`
+- `agents/schema/workflows/media-catalog.md`
+- `agents/schema/sources/identity-resolution.md`

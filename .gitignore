@@ -8,6 +8,7 @@
 !/.gitignore
 !/AGENTS.md
 !/CLAUDE.md
+!/README.md
 !/卡片导航.md
 
 # Agent skills and compatibility entrypoints; never track local permissions.
@@ -23,28 +24,54 @@
 .claude/**/.claude/
 .claude/**/settings.local.json
 
-# Active knowledge-system contracts and templates
-!/schema/
-!/schema/**
+# Agent governance, contracts and maintenance records; session bodies stay OneDrive-only.
+!/agents/
+agents/*
+!/agents/README.md
+!/agents/docs/
+agents/docs/*
+!/agents/docs/vault-guide.md
+!/agents/docs/_assets/
+agents/docs/_assets/*
+!/agents/docs/_assets/vault-guide/
+agents/docs/_assets/vault-guide/*
+!/agents/docs/_assets/vault-guide/directory-map.svg
+!/agents/docs/_assets/vault-guide/directory-map.png
+!/agents/docs/_assets/vault-guide/task-relations.svg
+!/agents/docs/_assets/vault-guide/task-relations.png
+!/agents/docs/_assets/vault-guide/knowledge-flow.svg
+!/agents/docs/_assets/vault-guide/knowledge-flow.png
+!/agents/schema/
+!/agents/schema/**
+!/agents/specs/
+!/agents/specs/**
+!/agents/migrations/
+!/agents/migrations/**
+agents/migrations/*.inventory.json
+agents/migrations/*.verification.json
+!/agents/backlog.md
+!/agents/sessions/
+agents/sessions/*
+!/agents/sessions/_Index.md
+!/agents/drafts/
+agents/drafts/*
+!/agents/drafts/README.md
+!/agents/views/
+agents/views/*
+!/agents/views/README.md
+!/agents/views/overview/
+!/agents/views/overview/**
 
 # Raw governance only; all source material and attachments stay OneDrive-only.
 !/raws/
 raws/*
 !/raws/AGENTS.md
 
-# Workspace framework, approved specs and migration control records
+# Personal workspace framework and approved views
 !/workspace/
 workspace/*
 !/workspace/AGENTS.md
 !/workspace/README.md
-!/workspace/backlog.md
-!/workspace/specs/
-!/workspace/specs/**
-!/workspace/migrations/
-!/workspace/migrations/**
-!/workspace/drafts/
-workspace/drafts/*
-!/workspace/drafts/README.md
 !/workspace/plans/
 workspace/plans/*
 !/workspace/plans/README.md
@@ -52,21 +79,23 @@ workspace/plans/*
 !/workspace/daily/
 workspace/daily/*
 !/workspace/daily/_Index.md
+!/workspace/todos/
+workspace/todos/*
+!/workspace/todos/_Index.md
 !/workspace/tasks/
 workspace/tasks/*
 !/workspace/tasks/_Index.md
 !/workspace/themes/
 workspace/themes/*
 !/workspace/themes/_Index.md
+!/workspace/learning/
+workspace/learning/*
+!/workspace/learning/AGENTS.md
+!/workspace/learning/README.md
+!/workspace/learning/_Index.md
 !/workspace/insights/
 workspace/insights/*
 !/workspace/insights/_Index.md
-!/workspace/sessions/
-workspace/sessions/*
-!/workspace/sessions/_Index.md
-!/workspace/overview.canvas
-!/workspace/overview/
-!/workspace/overview/**
 !/workspace/reading/
 workspace/reading/*
 !/workspace/reading/README.md
@@ -123,8 +152,28 @@ wiki/cinema/*
 !/.obsidian/snippets/
 !.obsidian/snippets/**
 
+# Local Daily automation source only; no plugin settings or third-party bundles.
+!/.obsidian/plugins/
+.obsidian/plugins/*
+!/.obsidian/plugins/vault-daily-todos/
+.obsidian/plugins/vault-daily-todos/*
+!/.obsidian/plugins/vault-daily-todos/manifest.json
+!/.obsidian/plugins/vault-daily-todos/main.js
+!/.obsidian/plugins/vault-daily-todos/model.cjs
+
 # Operating-system and Obsidian transient files
 .DS_Store
 **/.DS_Store
 .trash/
 **/.trash/
+
+# Task group framework only; personal groups and snapshots stay OneDrive-only.
+!/workspace/task-groups/
+workspace/task-groups/*
+!/workspace/task-groups/_Index.md
+!/.obsidian/plugins/vault-daily-todos/task-groups.cjs
+
+# Exercise index only; individual exercise notes remain OneDrive-only.
+!/workspace/exercises/
+workspace/exercises/*
+!/workspace/exercises/_Index.md

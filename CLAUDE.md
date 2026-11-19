@@ -3,8 +3,9 @@
 请按以下顺序读取：
 
 1. 根目录 `AGENTS.md`。
-2. `schema/README.md` 与 `schema/ownership.md`。
-3. 目标目录最近的 `AGENTS.md`。
-4. 根 `AGENTS.md` 路由到的 workflow、source adapter 和 domain schema。
+2. `agents/README.md` 中的全库操作规范。
+3. `agents/schema/README.md` 与 `agents/schema/ownership.md`。
+4. 目标目录最近的 `AGENTS.md`。
+5. `agents/README.md` 路由到的 workflow、source adapter、domain schema 和 Skill。
 
-不要把本文件作为独立规则来源；知识库结构、权限和工作流以 `AGENTS.md` 与 `schema/` 为准。
+本文件只作兼容入口，不是独立规则来源；操作要求以 `agents/README.md` 为准，结构与行为契约以 `agents/schema/` 为准。

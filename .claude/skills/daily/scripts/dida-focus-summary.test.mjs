@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { execFileSync, spawnSync } from "node:child_process";
@@ -12,13 +12,16 @@ const sourceB = "bbbbbbbbbbbbbbbbbbbbbbbb";
 const project = "cccccccccccccccccccccccc";
 const local = (n) => `workspace/tasks/TASK-202609-00${n}`;
 const url = (id) => `https://dida365.com/webapp/#p/${project}/tasks/${id}`;
+const filledMood = "> [!note] 今日心情\n> 平静。\n\n";
 
 function fixture(t) {
   const root = mkdtempSync(join(tmpdir(), "obsidian-focus-test-"));
   t.after(() => rmSync(root, { recursive: true, force: true }));
-  mkdirSync(join(root, "schema"));
+  mkdirSync(join(root, "agents/schema"), { recursive: true });
+  assert.equal(existsSync(join(root, "schema")), false, "fixture must use only the migrated schema location");
   mkdirSync(join(root, "workspace/tasks"), { recursive: true });
-  const daily = join(root, "workspace/2026-09-14.daily.md");
+  const daily = join(root, "workspace/daily/2026/2026-09/2026-09-14.daily.md");
+  mkdirSync(dirname(daily), { recursive: true });
   const writeTask = (n, id = sourceA) => writeFileSync(join(root, local(n) + ".md"),
     `---\ntype: task\ntask_id: TASK-202609-00${n}\ntitle: Task ${n}\ndida_url: ${url(id)}\n---\n`);
   writeTask(1); writeTask(2); writeTask(3, sourceB);
@@ -42,17 +45,63 @@ test("WORK/LIFE subheadings preserve all task-section mappings and exclude mater
   assert.equal(tasks.every((task) => task.candidates.length === 1), true);
 });
 
+test("nested candidate pool is excluded from review and focus attribution", (t) => {
+  const f = fixture(t);
+  const text = `## 跨日任务\n- [[${local(1)}|Task 1]]\n  - [x] 执行 ↪ [[${local(1)}#^step-001|待办]]\n## 当日任务\n### 今日安排\n#### WORK\n- [x] 已办好\n#### LIFE\n### 小任务待办池\n- [ ] [[${local(3)}|只是候选]]\n- [>] 无需收口的候选\n`;
+  assert.deepEqual(extractDidaTasks(text, f.daily).map(task => task.localPath), [local(1)]);
+  // This legacy fixture has no Task Todo: keep its historical entity-level link for the CLI closure check.
+  const legacy = text.replace(` ↪ [[${local(1)}#^step-001|待办]]`, "");
+  writeFileSync(f.daily, filledMood + legacy);
+  const result = spawnSync(process.execPath, [fileURLToPath(new URL("./daily-review-check.mjs", import.meta.url)), "--file", f.daily, "--format", "json"], { encoding: "utf8" });
+  assert.equal(result.status, 0);
+  assert.equal(JSON.parse(result.stdout).closeable, true);
+});
+
 test("review checks WORK and LIFE; Task ownership does not cross a subgroup heading", (t) => {
   const f = fixture(t);
   const script = fileURLToPath(new URL("./daily-review-check.mjs", import.meta.url));
   const text = `## 跨日任务\n### 1. 高优先级\n#### WORK\n- [x] [[${local(1)}]]\n  - [>] Valid child\n#### LIFE\n  - [>] Orphan child\n### 2. 低优先级\n#### WORK\n- [ ] Work pending\n#### LIFE\n- [/] Life pending\n## 当日任务\n### WORK\n- [ ] Work inline\n### LIFE\n- [ ] Life inline\n## 待分流\n- [ ] Not a scheduled task\n`;
-  writeFileSync(f.daily, text);
+  writeFileSync(f.daily, filledMood + text);
   const result = spawnSync(process.execPath, [script, "--file", f.daily, "--format", "json"], { encoding: "utf8" });
   assert.equal(result.status, 2);
   const report = JSON.parse(result.stdout);
   assert.equal(report.unresolved.length, 4);
   assert.deepEqual(report.danglingHandoffs.map((item) => item.text), ["Orphan child"]);
-  assert.equal(readFileSync(f.daily, "utf8"), text);
+  assert.equal(readFileSync(f.daily, "utf8"), filledMood + text);
+});
+
+test("non-checkbox Task list title owns its indented handoffs", (t) => {
+  const f = fixture(t);
+  const script = fileURLToPath(new URL("./daily-review-check.mjs", import.meta.url));
+  const text = [
+    "## 跨日任务",
+    "- [[workspace/tasks/TASK-202609-001|Task 1]]",
+    "  - [>] Continue tomorrow",
+    "## 当日任务",
+  ].join("\n");
+  writeFileSync(f.daily, filledMood + text);
+  const result = spawnSync(process.execPath, [script, "--file", f.daily, "--format", "json"], { encoding: "utf8" });
+  assert.equal(result.status, 0);
+  assert.equal(JSON.parse(result.stdout).closeable, true);
+});
+
+test("inline handoff accepts an exact Todo block link but rejects a page-only Todo link", (t) => {
+  const f = fixture(t);
+  const script = fileURLToPath(new URL("./daily-review-check.mjs", import.meta.url));
+  const valid = [
+    "## 当日任务",
+    "- [>] 预约检查 → [[workspace/todos/2026/2026-09#^todo-20260918-01|待办池]]",
+  ].join("\n");
+  writeFileSync(f.daily, filledMood + valid);
+  const accepted = spawnSync(process.execPath, [script, "--file", f.daily, "--format", "json"], { encoding: "utf8" });
+  assert.equal(accepted.status, 0);
+  assert.equal(JSON.parse(accepted.stdout).closeable, true);
+
+  const pageOnly = "## 当日任务\n- [>] 预约检查 → [[workspace/todos/2026/2026-09|待办池]]\n";
+  writeFileSync(f.daily, filledMood + pageOnly);
+  const rejected = spawnSync(process.execPath, [script, "--file", f.daily, "--format", "json"], { encoding: "utf8" });
+  assert.equal(rejected.status, 2);
+  assert.equal(JSON.parse(rejected.stdout).danglingHandoffs.length, 1);
 });
 
 test("one local Task: repeated occurrences and direct source deduplicate; only task sections count", (t) => {
@@ -66,6 +115,45 @@ test("one local Task: repeated occurrences and direct source deduplicate; only t
   assert.equal(s.totalSeconds, 60); // Short durations are milliseconds, not seconds.
   assert.equal(s.tasks[0].totalSeconds, 60);
   assert.equal(s.records.length, 1);
+});
+
+test("parent and child sources on one local Task aggregate once per focus record", (t) => {
+  const f = fixture(t);
+  writeFileSync(join(f.root, local(1) + ".md"), `---\ntype: task\ntask_id: TASK-202609-001\ntitle: One local task\ndida_urls:\n  - "${url(sourceA)}"\n  - "${url(sourceB)}"\n  - "${url(sourceB)}"\n---\n`);
+  const mappings = extractDidaTasks(dailyText(1), f.daily);
+  assert.equal(mappings.length, 2);
+  const records = [timing([sourceA], 60000, "parent"), timing([sourceB], 120000, "child"), timing([sourceA, sourceB], 180000, "both")];
+  const s = summary(mappings, records);
+  assert.equal(s.tasks.length, 1);
+  assert.equal(s.totalSeconds, 360);
+  assert.equal(s.tasks[0].totalSeconds, 360);
+  assert.equal(s.unallocatedSeconds, 0);
+  assert.equal(s.tasks[0].sources.length, 2);
+  assert.equal(s.records.every((record) => record.attribution === "local"), true);
+  assert.ok(renderMarkdown({ ...s, date: "2026-09-14" }).includes(url(sourceB)));
+});
+
+test("many-to-many shared child retains ambiguity and manual assignment is added once", (t) => {
+  const f = fixture(t);
+  writeFileSync(join(f.root, local(1) + ".md"), `---\ntype: task\ntask_id: TASK-202609-001\ndida_urls: ["${url(sourceA)}", "${url(sourceB)}"]\n---\n`);
+  const mappings = extractDidaTasks(dailyText(1, 3), f.daily);
+  const records = uniqueRecords([timing([sourceA], 60000, "a"), timing([sourceB], 120000, "b"), timing([sourceA, sourceB], 180000, "both")], "timing");
+  const s = buildSummary(mappings, [], records, "/nonexistent-dida");
+  assert.equal(s.totalSeconds, 360);
+  assert.equal(s.unallocatedSeconds, 300);
+  const assigned = buildSummary(mappings, [], records, "/nonexistent-dida", { "timing:b": { localPath: local(3), source: "user_confirmed" }, "timing:both": { localPath: local(1), source: "user_confirmed" } });
+  assert.equal(assigned.tasks.find((task) => task.localPath === local(1)).totalSeconds, 240);
+  assert.equal(assigned.tasks.find((task) => task.localPath === local(3)).totalSeconds, 120);
+  assert.equal(assigned.tasks.reduce((sum, task) => sum + task.totalSeconds, 0), assigned.totalSeconds);
+  assert.equal(assigned.unallocatedSeconds, 0);
+});
+
+test("malformed or mixed mapping fields fail explicitly instead of omitting sources", (t) => {
+  const f = fixture(t);
+  for (const fields of [`dida_urls: not-a-list`, `dida_urls:\n  - bogus`, `dida_urls: []\ndida_url: ${url(sourceA)}`]) {
+    writeFileSync(join(f.root, local(1) + ".md"), `---\ntype: task\n${fields}\n---\n`);
+    assert.throws(() => extractDidaTasks(dailyText(1), f.daily));
+  }
 });
 
 test("same source on different days belongs to different local Tasks, not duplicated quarter totals", (t) => {
@@ -102,6 +190,25 @@ test("one record referencing multiple sources is counted once and remains unallo
   assert.equal(s.totalSeconds, 60);
   assert.equal(s.unallocatedSeconds, 60);
   assert.equal(s.tasks.reduce((sum, task) => sum + task.totalSeconds, 0), 0);
+});
+
+test("user-confirmed attribution assigns a shared record to one candidate exactly once", (t) => {
+  const f = fixture(t);
+  const tasks = extractDidaTasks(dailyText(1, 3), f.daily);
+  const s = buildSummary(
+    tasks,
+    [],
+    uniqueRecords([timing([sourceA, sourceB])], "timing"),
+    "/nonexistent-dida",
+    { "timing:r1": { localPath: local(1), source: "user_confirmed" } },
+  );
+  assert.equal(s.totalSeconds, 60);
+  assert.equal(s.unallocatedSeconds, 0);
+  assert.equal(s.tasks.find((task) => task.localPath === local(1)).totalSeconds, 60);
+  assert.equal(s.tasks.find((task) => task.localPath === local(3)).totalSeconds, 0);
+  assert.deepEqual(s.records[0].localPaths, [local(1)]);
+  assert.equal(s.records[0].manualAttribution, true);
+  assert.match(renderSnapshotMarkdown({ ...s, mappings: tasks, date: "2026-09-14" }, f.daily), /manualAttributions/);
 });
 
 test("sidecar snapshot roundtrip retains historical mapping despite current entity edits", (t) => {

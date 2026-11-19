@@ -1,0 +1,16 @@
+.todo-pool .todo-pool-note, .todo-pool .todo-pool-empty, .todo-pool .todo-pool-created { color: var(--text-muted); font-size: var(--font-smaller); }
+.todo-pool .todo-pool-created, .todo-pool .todo-pool-overdue { white-space: nowrap; }
+.todo-pool .todo-pool-overdue { color: var(--text-error); font-size: var(--font-smaller); }
+.todo-pool .todo-pool-overdue-heading { color: var(--text-error); }
+.todo-pool .todo-pool-add { display: flex; gap: .5rem; flex-wrap: wrap; }
+.todo-pool .todo-pool-add input { flex: 1; min-width: 12rem; }
+.todo-pool input:disabled { cursor: default; }
+.todo-pool h4 { margin-top: 1em; margin-bottom: .5em; }
+.todo-pool .task-list-item { overflow-wrap: anywhere; margin-block: .35em; }
+.todo-pool .todo-pool-edit { margin-left: .6em; padding: 0 .4em; height: auto; font-size: var(--font-smaller); color: var(--text-muted); background: transparent; box-shadow: none; }
+.todo-pool .todo-pool-schedule { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .5rem; }
+.todo-pool .todo-pool-schedule input[hidden] { display: none; }
+@media (max-width: 500px) {
+  .todo-pool .todo-pool-add input { min-width: 0; flex-basis: 60%; }
+  .todo-pool .todo-pool-add select, .todo-pool .todo-pool-schedule input { max-width: 100%; }
+}

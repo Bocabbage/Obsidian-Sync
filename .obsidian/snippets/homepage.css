@@ -1,4 +1,4 @@
-/* Shared presentation for workspace/overview/home.md and overview.canvas. */
+/* Shared presentation for agents/views/overview/home.md and overview.canvas. */
 .homepage-panel {
   --homepage-accent: var(--interactive-accent);
   display: flex;

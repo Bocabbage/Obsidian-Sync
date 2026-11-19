@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1130" viewBox="0 0 1200 1130" data-generator="fireworks-tech-graph" data-quality-profile="showcase">
+<title>材料、学习记录与知识整理</title><desc>连起明确相关的内容；需要回答一个问题时，再选择材料进行编译。</desc>
+<style>text {font-family:"Heiti SC","PingFang SC","Helvetica Neue",sans-serif;}</style>
+<rect width="1200" height="1130" fill="#fff" data-graph-role="background"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8 Z" fill="#2563eb" data-graph-role="decoration"/></marker></defs>
+<text x="60" y="68" font-size="32" fill="#111827" text-anchor="start" font-weight="600" data-graph-role="label" data-graph-bounds="60.0 36.0 444.0 72.0">材料、学习记录与知识整理</text>
+<text x="60" y="110" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="label" data-graph-bounds="60.0 90.0 660.0 114.0">连起明确相关的内容；需要回答一个问题时，再选择材料进行编译。</text>
+<rect x="60" y="190" width="330" height="140" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" data-graph-role="node" data-node-id="theme"/>
+<text x="82" y="230" font-size="25" fill="#111827" text-anchor="start" font-weight="600" data-graph-role="decoration" data-graph-bounds="82.0 205.0 154.5 234.0" data-owner="theme">Theme</text>
+<text x="82" y="268" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="82.0 248.0 274.8 272.0" data-owner="theme">保存目的与 roadmap</text>
+<text x="82" y="300" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="82.0 280.0 262.0 304.0" data-owner="theme">指向材料和阶段记录</text>
+<rect x="780" y="190" width="330" height="140" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" data-graph-role="node" data-node-id="raw"/>
+<text x="802" y="230" font-size="25" fill="#111827" text-anchor="start" font-weight="600" data-graph-role="decoration" data-graph-bounds="802.0 205.0 989.0 234.0" data-owner="raw">Raw · 来源材料</text>
+<text x="802" y="268" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="802.0 248.0 982.0 272.0" data-owner="raw">保留原文或忠实捕获</text>
+<text x="802" y="300" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="802.0 280.0 951.6 304.0" data-owner="raw">可以没有 Theme</text>
+<path d="M390 260 L780 260" fill="none" stroke="#2563eb" stroke-width="2" data-graph-role="edge" data-source="theme" data-target="raw"/>
+<text x="585" y="233" font-size="23" fill="#2563eb" text-anchor="middle" font-weight="400" data-graph-role="label" data-graph-bounds="484.9 210.0 685.0 237.0">N:N · materials</text>
+<text x="585" y="295" font-size="19" fill="#6b7280" text-anchor="middle" font-weight="400" data-graph-role="label" data-graph-bounds="477.5 276.0 692.5 299.0">Raw 用原生反向链接返回</text>
+<rect x="60" y="520" width="330" height="140" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" data-graph-role="node" data-node-id="learning"/>
+<text x="82" y="560" font-size="25" fill="#111827" text-anchor="start" font-weight="600" data-graph-role="decoration" data-graph-bounds="82.0 535.0 270.5 564.0" data-owner="learning">Learning Note</text>
+<text x="82" y="598" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="82.0 578.0 302.0 602.0" data-owner="learning">自己的理解、问题与尝试</text>
+<text x="82" y="630" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="82.0 610.0 276.8 634.0" data-owner="learning">随手记录 · 阶段整理</text>
+<rect x="780" y="520" width="330" height="140" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" data-graph-role="node" data-node-id="wiki"/>
+<text x="802" y="560" font-size="25" fill="#111827" text-anchor="start" font-weight="600" data-graph-role="decoration" data-graph-bounds="802.0 535.0 1003.5 564.0" data-owner="wiki">Wiki · 编译知识</text>
+<text x="802" y="598" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="802.0 578.0 1022.0 602.0" data-owner="wiki">核对、整理并保留来源链</text>
+<text x="802" y="630" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="802.0 610.0 982.0 634.0" data-owner="wiki">原材料和过程仍保留</text>
+<path d="M225 330 L225 520" fill="none" stroke="#2563eb" stroke-width="2" data-graph-role="edge" data-source="theme" data-target="learning"/>
+<text x="255" y="404" font-size="20" fill="#2563eb" text-anchor="start" font-weight="400" data-graph-role="label" data-graph-bounds="255.0 384.0 459.4 408.0">roadmap → 阶段入口</text>
+<text x="255" y="439" font-size="18" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="label" data-graph-bounds="255.0 421.0 544.1 443.0">themes 回链；初期通常一份主笔记</text>
+<path d="M945 330 L945 520" fill="none" stroke="#2563eb" stroke-width="2" data-graph-role="edge" data-source="raw" data-target="wiki" marker-end="url(#arrow)"/>
+<text x="970" y="422" font-size="19" fill="#2563eb" text-anchor="start" font-weight="400" data-graph-role="label" data-graph-bounds="970.0 403.0 1065.0 426.0">可直接编译</text>
+<path d="M390 590 L780 590" fill="none" stroke="#2563eb" stroke-width="2" data-graph-role="edge" data-source="learning" data-target="wiki" marker-end="url(#arrow)"/>
+<text x="585" y="563" font-size="21" fill="#2563eb" text-anchor="middle" font-weight="400" data-graph-role="label" data-graph-bounds="511.5 542.0 658.5 567.0">可编译局部认识</text>
+<rect x="60" y="850" width="330" height="140" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" data-graph-role="node" data-node-id="daily"/>
+<text x="82" y="890" font-size="25" fill="#111827" text-anchor="start" font-weight="600" data-graph-role="decoration" data-graph-bounds="82.0 865.0 273.0 894.0" data-owner="daily">Daily · 小零碎</text>
+<text x="82" y="928" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="82.0 908.0 242.0 932.0" data-owner="daily">先记录当时的想法</text>
+<text x="82" y="960" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="82.0 940.0 222.0 964.0" data-owner="daily">保留当天上下文</text>
+<rect x="780" y="850" width="330" height="140" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" data-graph-role="node" data-node-id="insight"/>
+<text x="802" y="890" font-size="25" fill="#111827" text-anchor="start" font-weight="600" data-graph-role="decoration" data-graph-bounds="802.0 865.0 1047.0 894.0" data-owner="insight">Insight · 独立想法</text>
+<text x="802" y="928" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="802.0 908.0 991.6 932.0" data-owner="insight">摘录后仍链接 Daily</text>
+<text x="802" y="960" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="decoration" data-graph-bounds="802.0 940.0 1022.0 964.0" data-owner="insight">条目标签帮助跨日期查找</text>
+<path d="M390 920 L780 920" fill="none" stroke="#2563eb" stroke-width="2" data-graph-role="edge" data-source="daily" data-target="insight" marker-end="url(#arrow)"/>
+<text x="585" y="894" font-size="20" fill="#2563eb" text-anchor="middle" font-weight="400" data-graph-role="label" data-graph-bounds="475.0 874.0 695.0 898.0">摘录值得单独重读的想法</text>
+<path d="M945 850 L945 660" fill="none" stroke="#2563eb" stroke-width="2" data-graph-role="edge" data-source="insight" data-target="wiki" marker-end="url(#arrow)"/>
+<text x="970" y="767" font-size="19" fill="#2563eb" text-anchor="start" font-weight="400" data-graph-role="label" data-graph-bounds="970.0 748.0 1065.0 771.0">可参与编译</text>
+<text x="60" y="732" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="label" data-graph-bounds="60.0 712.0 481.2 736.0">标签提供检索线索，不自动建立 Theme 关系。</text>
+<text x="60" y="775" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="label" data-graph-bounds="60.0 755.0 562.4 779.0">materials 只放 Raw；学习笔记与成果链接留在正文。</text>
+<text x="60" y="1051" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="label" data-graph-bounds="60.0 1031.0 680.0 1055.0">实线表示现行关联；箭头表示处理方向。所有编译路径均为按需选择。</text>
+<text x="60" y="1090" font-size="20" fill="#6b7280" text-anchor="start" font-weight="400" data-graph-role="label" data-graph-bounds="60.0 1070.0 658.0 1094.0">关联不代表核验、完成或已掌握，也不要求每份材料都进入 Wiki。</text>
+</svg>

@@ -1,12 +1,16 @@
 ---
 type: workspace-index
 workspace_type: themes
-updated: 2026-09-14
+updated: 2026-10-05
 ---
 
 # Themes
 
-Theme 是你主动设立、用于指导任务的持续研究或学习方向，不是自动提炼的项目分类。Agent 可以建议，但未经你确认不会创建（包括 seed）。创建规则见 [[schema/page-types/theme|Theme Schema]]。
+Theme 是你主动设立、值得独立规划和回看的方向或阶段性事项，保存目的、范围、推进路线和结果，并指导 Task。跨季度学习和一次旅行都可以使用，由你决定开始、暂停或结束。Agent 可以建议，但未经你确认不会创建（包括 seed）。创建规则见 [[agents/schema/page-types/theme|Theme Schema]]。
+
+每个 Theme 的 `materials` 属性列出明确相关的 Raw，点开即可阅读；在 Raw 的原生反向链接中可以看到引用它的 Theme。同一份材料可以服务多个 Theme，暂时没有归属的材料也可以继续保留。
+
+学习类 Theme 确认 roadmap 后，会有一份主学习笔记；从路线里的“记录入口”可以直接打开相应阶段。个人笔记通过路线和正文关联，全部笔记见 [[workspace/learning/_Index|学习笔记索引]]。
 
 ## 当前关注
 
