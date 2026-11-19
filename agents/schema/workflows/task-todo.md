@@ -39,6 +39,16 @@ Daily 保留当天安排与原始记录；Task 按 Todo 汇集完整过程。用
 
 核对过程明细时，逐项对照表格备注和来源 Daily。先确认 Task 路径、step ID 和日期，再比较内容。等义摘要保留一次，摘要省略的步骤、疑问、状态和链接补进对应日期。跨任务移交可以保留明确标注的回链。若原文未带 step，仅在同一 Task 内能唯一对应时归档。手写时让同级事项对齐，笔记比事项多缩进一级。
 
+## Task Todo 截止日期
+
+创建 Daily 时，模板导航后的 `<!-- task-ddl:pending -->` 由同一次 Task Todo 续入替换为「今日 DDL」Callout。只列 due 等于 Daily.date、创建时尚未完成的 Todo，范围为 active / blocked / inbox Task，包含暂停与未到 resume 的事项；已完成、已取消、未来及逾期事项跳过。日期统一加粗，事项链接原 step，作为普通列表展示。没有到期事项时显示空状态。该区域只生成一次，重复续入沿用创建时清单，过去或已关闭 Daily 保留原文。Agent 晨间核对生成结果，插件不可用时用同一个 task-todo.mjs 计划输出整理。手写新增 DDL 仍由晚间完整 DDL 检查覆盖。
+
+每个 Task Todo 可选 DDL，精度为年月日。四列表格在 task-step 注释中保存 `"due":"YYYY-MM-DD"`，并在备注统一加粗显示 `**📅 YYYY-MM-DD**`；旧列表在事项原行写 `**📅 YYYY-MM-DD**`。两处日期须一致，未填写则按原规则处理。DDL 与 Task 全局 due、录入日、发生日和 resume 分别维护。新生成的 Daily occurrence 显示该 DDL。 加粗用于突出截止日期；当日重点继续按 Highlightr Red 识别。兼容读取既有纯文字及高亮日期。
+
+Daily review 用 Daily.date 比较日期，扫描所有 active / blocked / inbox Task 的未完成 Todo，包含未排入当天、暂停或转交的事项。报告 `taskDeadlines` 中 due 等于复盘日期的「今日到期」及小于复盘日期的「已逾期」，附原事项链接。已完成、已取消及尚未录入的事项跳过，已关闭历史 Daily 沿用原记录。日期无效会报告 `taskDeadlineIssues`。
+
+DDL 到期本身作为提醒，Agent 须逐项核对完成、继续或改期的决定；`[>]` 只表示当天交接，原 Todo 未完成仍须提醒。提醒不单独阻止 Daily 收口。只有用户明确改期才更新 DDL，并在 Task 过程明细按决定日期保留旧日期、新日期与来源。重做同日复盘先去重，保留过去 Daily 的静态日期。
+
 ## Daily Review
 
 1. 阅读当天全部 Task occurrence 和人工笔记，包括内部列表、引用块、材料链接、当天完成与取消项；优先按已有 step、外部问题链接和范围匹配，不能只按标题相似合并。

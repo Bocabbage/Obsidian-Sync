@@ -49,7 +49,7 @@ function tableStep(raw) {
   if (!meta) throw new Error("表格明细缺 task-step 元数据");
   const data = JSON.parse(meta[1]);
   if (!data || typeof data !== "object" || Array.isArray(data) ||
-      Object.keys(data).some(key => !["id", "created", "occurred", "resume", "paused", "closed"].includes(key)) ||
+      Object.keys(data).some(key => !["id", "created", "occurred", "resume", "paused", "closed", "due"].includes(key)) ||
       Object.values(data).some(value => typeof value !== "string" && typeof value !== "boolean")) throw new Error("表格元数据字段无效");
   const cells = raw.replace(meta[0], "").trim().replace(/^\||\|$/g, "").split(/(?<!\\)\|/).map(cell => cell.trim().replace(/\\\|/g, "|"));
   if (cells.length !== 4) throw new Error("明细表必须为事项、状态、完成时间、备注四列");
@@ -63,7 +63,7 @@ function tableStep(raw) {
   if (data.paused !== undefined && typeof data.paused !== "boolean") throw new Error("paused 必须是布尔值");
   const label = cells[0].replace(/^\d+\s*·\s*/, "");
   if (!label) throw new Error("明细事项不能为空");
-  const flags = `${data.occurred ? ` [occurred:: ${data.occurred}]` : ""}${data.resume ? ` [resume:: ${data.resume}]` : ""}${data.closed ? ` [closed:: ${data.closed}]` : ""}${data.paused || cells[1] === "已转交" || cells[1] === "暂停" ? " [carry:: paused]" : ""}`;
+  const flags = `${data.due ? ` 📅 ${data.due}` : ""}${data.occurred ? ` [occurred:: ${data.occurred}]` : ""}${data.resume ? ` [resume:: ${data.resume}]` : ""}${data.closed ? ` [closed:: ${data.closed}]` : ""}${data.paused || cells[1] === "已转交" || cells[1] === "暂停" ? " [carry:: paused]" : ""}`;
   return `- [${status}] ${label} ➕ ${data.created}${flags}${completed ? ` ✅ ${completed}` : ""} ^${data.id}`;
 }
 
@@ -81,6 +81,7 @@ function taskTodos(markdown, path) {
       try { row = tableStep(raw); }
       catch (error) { errors.push(`${path}:${index + 1} ${error.message}`); continue; }
     }
+    row = row.replace(/(?:==|\*\*)📅 (\d{4}-\d{2}-\d{2})(?:==|\*\*)/g, "📅 $1");
     const match = row.match(/^- \[([ xX/\->])\] (.+)$/);
     if (!match) continue;
     const body = match[2];
@@ -91,8 +92,10 @@ function taskTodos(markdown, path) {
     const closed = body.match(/\[closed::\s*([^\]]+)\]/)?.[1]?.trim();
     const status = match[1].toLowerCase();
     const occurred = body.match(/\[occurred::\s*([^\]]+)\]/)?.[1]?.trim();
+    const dueTokens = [...body.matchAll(/📅\s*(\S+)/g)].map(match => match[1]);
+    const due = dueTokens[0];
     const earliest = occurred || created;
-    if (!id || ids.has(id) || !validDate(created) || (resume !== undefined && !validDate(resume)) ||
+    if (dueTokens.length > 1 || (due !== undefined && !validDate(due)) || !id || ids.has(id) || !validDate(created) || (resume !== undefined && !validDate(resume)) ||
       (occurred !== undefined && (!validDate(occurred) || occurred > created)) ||
       (status === "x" && (!validDate(completed) || completed < earliest)) ||
       (status === "-" && (!validDate(closed) || closed < earliest)) || status === ">" ||
@@ -103,9 +106,9 @@ function taskTodos(markdown, path) {
       errors.push(`${path}:${index + 1} 表格明细缺唯一兼容 block 锚点`); continue;
     }
     ids.add(id);
-    steps.push({ id, status, created, occurred, resume, completed, closed,
+    steps.push({ id, status, created, occurred, resume, completed, closed, ...(due ? { due } : {}),
       paused: /\[carry::\s*paused\s*\]/.test(body),
-      label: body.replace(/\s+\^step-\d{3,}\s*$/, "").replace(/(?:➕|✅|⏳)\s*\d{4}-\d{2}-\d{2}/g, "")
+      label: body.replace(/\s+\^step-\d{3,}\s*$/, "").replace(/(?:➕|✅|⏳|📅)\s*\d{4}-\d{2}-\d{2}/g, "")
         .replace(/\[(?:resume|carry|closed|occurred)::[^\]]*\]/g, "").trim(),
     });
   }
@@ -160,6 +163,21 @@ function planDaily({ markdown, path, date, tasks, history = [], manual = false }
     for (const [key, value] of occurrences(page.markdown).locations) prefs.set(key, value);
   }
   const added = [], errors = [], insertions = new Map();
+  const ddlMarker = "<!-- task-ddl:pending -->";
+  const dueToday = [];
+  if (markdown.includes(ddlMarker)) {
+    if (markdown.split(ddlMarker).length !== 2) errors.push("今日 DDL 生成标记重复");
+    for (const task of tasks.filter(Boolean)) {
+      if (!["active", "blocked", "inbox"].includes(task.status) || !validDate(task.created) || task.created > date) continue;
+      errors.push(...task.errors);
+      for (const step of task.steps) {
+        if (step.due === date && step.created <= date && [" ", "/"].includes(step.status)) {
+          dueToday.push({ task, step });
+        }
+      }
+    }
+    dueToday.sort((a, b) => a.task.path.localeCompare(b.task.path) || a.step.id.localeCompare(b.step.id));
+  }
   const lines = markdown.split(/\r?\n/);
   const addAt = (index, text) => insertions.set(index, [...(insertions.get(index) || []), text]);
   const sectionStart = lines.indexOf("## 跨日任务");
@@ -171,8 +189,8 @@ function planDaily({ markdown, path, date, tasks, history = [], manual = false }
     const steps = task.steps.filter(step => [" ", "/"].includes(step.status) && step.created <= date && !step.paused && (!step.resume || step.resume <= date));
     const remaining = steps.filter(step => !current.items.some(item =>
       item.links.some(link => link.path === task.path && link.id === step.id) ||
-      (item.owner === task.path && item.text.replace(/<mark class="hltr-red">([^<]*)<\/mark>/g, "$1")
-        .replace(/(?:✅)\s*\d{4}-\d{2}-\d{2}/g, "").trim() === step.label)));
+      (item.owner === task.path && item.text.replace(/(?:==|\*\*)📅 (\d{4}-\d{2}-\d{2})(?:==|\*\*)/g, "📅 $1").replace(/<mark class="hltr-red">([^<]*)<\/mark>/g, "$1")
+        .replace(/(?:✅|📅)\s*\d{4}-\d{2}-\d{2}/g, "").trim() === step.label)));
     if (!remaining.length) continue;
     const existing = current.locations.get(task.path);
     const preference = existing || prefs.get(task.path) || { priority: task.priority === "high" ? "high" : "low", group: "WORK" };
@@ -195,7 +213,7 @@ function planDaily({ markdown, path, date, tasks, history = [], manual = false }
       addAt(at, `- [[${task.path}|${task.title.replaceAll("|", "／")}]]`);
     }
     for (const step of remaining) {
-      addAt(at, `  - [ ] ${step.label} ↪ [[${task.path}#^${step.id}|待办]]`);
+      addAt(at, `  - [ ] ${step.label}${step.due ? ` **📅 ${step.due}**` : ""} ↪ [[${task.path}#^${step.id}|待办]]`);
       added.push({ path: task.path, id: step.id });
     }
     addAt(at, "");
@@ -203,7 +221,15 @@ function planDaily({ markdown, path, date, tasks, history = [], manual = false }
   // Fail atomically: missing/ambiguous anchors must not silently drop a step.
   if (errors.length) return { markdown, added: [], errors };
   for (const [at, content] of [...insertions].sort((a, b) => b[0] - a[0])) lines.splice(at, 0, ...content);
-  return { markdown: lines.join("\n").replace(MARKER, `<!-- task-todo:generated ${date} -->`), added, errors };
+  const ddl = [
+    `<!-- task-ddl:generated ${date} -->`,
+    "> [!important] 今日 DDL",
+    `> **📅 ${date}** · 创建时尚未完成的事项`,
+    ">",
+    ...dueToday.map(({ task, step }) => `> - ${step.label} ↪ [[${task.path}#^${step.id}|${task.title.replaceAll("|", "／")} · 明细]]`),
+    ...(dueToday.length ? [] : ["> 今天没有到期的未完成 Task Todo。"]),
+  ].join("\n");
+  return { markdown: lines.join("\n").replace(MARKER, `<!-- task-todo:generated ${date} -->`).replace(ddlMarker, () => ddl), added, errors };
 }
 
 function reviewLinks(markdown, tasks) {

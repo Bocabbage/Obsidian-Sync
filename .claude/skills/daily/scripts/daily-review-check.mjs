@@ -123,6 +123,25 @@ function buildReport(markdown, file) {
     return existsSync(filename) ? model.taskTodos(readFileSync(filename, "utf8"), path + ".md") : null;
   }).filter(Boolean);
   const taskTodoIssues = model.reviewLinks(markdown, linkedTasks);
+  const reviewDate = model.scalar(markdown, "date");
+  const taskDeadlines = [];
+  const taskDeadlineIssues = [];
+  const taskFolder = join(vaultRoot, "workspace/tasks");
+  // Current deadlines are actionable during an open review. Closed pages keep their history.
+  if (model.scalar(markdown, "status") === "open" && model.validDate(reviewDate) && existsSync(taskFolder)) {
+    for (const name of readdirSync(taskFolder).filter(name => /^TASK-\d{6}-\d{3}\.md$/.test(name))) {
+      const path = `workspace/tasks/${name}`;
+      const task = model.taskTodos(readFileSync(join(taskFolder, name), "utf8"), path);
+      if (!task || !["active", "blocked", "inbox"].includes(task.status)) continue;
+      taskDeadlineIssues.push(...task.errors.map(reason => ({ path, reason })));
+      for (const step of task.steps) {
+        if (step.due && step.due <= reviewDate && step.created <= reviewDate && [" ", "/"].includes(step.status)) {
+          taskDeadlines.push({ path: task.path, title: task.title, id: step.id, text: step.label,
+            due: step.due, state: step.due === reviewDate ? "今日到期" : "已逾期" });
+        }
+      }
+    }
+  }
   const smallTaskIssues = checkSmallTasks(markdown, file, vaultRoot);
   const taskGroupIssues = [];
   if (markdown.includes('dv.view("agents/views/overview/_views/task-pool"')) {
@@ -151,15 +170,19 @@ function buildReport(markdown, file) {
     }
   }
   return {
-    closeable: moodIssues.length === 0 && unresolved.length === 0 && danglingHandoffs.length === 0 && taskTodoIssues.length === 0 && smallTaskIssues.length === 0 && taskGroupIssues.length === 0 && exerciseIssues.length === 0,
-    moodIssues, unresolved, danglingHandoffs, taskTodoIssues, smallTaskIssues, taskGroupIssues, exerciseIssues,
+    closeable: moodIssues.length === 0 && unresolved.length === 0 && danglingHandoffs.length === 0 && taskTodoIssues.length === 0 && smallTaskIssues.length === 0 && taskGroupIssues.length === 0 && exerciseIssues.length === 0 && taskDeadlineIssues.length === 0,
+    moodIssues, unresolved, danglingHandoffs, taskTodoIssues, smallTaskIssues, taskGroupIssues, exerciseIssues, taskDeadlines, taskDeadlineIssues,
   };
 }
 
 function renderMarkdown(report) {
-  if (report.closeable) return "Daily 收口检查通过，可以关闭。";
+  const deadlineLines = [
+    ...report.taskDeadlines.map(item => `- DDL ${item.state}（${item.due}） ${item.text} ↪ [[${item.path}#^${item.id}|明细]]`),
+    ...report.taskDeadlineIssues.map(item => `- DDL 检查失败 ${item.reason}`),
+  ];
+  if (report.closeable) return ["Daily 收口检查通过，可以关闭。", ...deadlineLines].join("\n");
 
-  const lines = ["Daily 尚不能关闭："];
+  const lines = ["Daily 尚不能关闭：", ...deadlineLines];
   for (const issue of report.moodIssues) lines.push(`- ${issue.line ? `L${issue.line} ` : ""}${issue.reason}`);
   if (report.unresolved.length) {
     lines.push("- 仍有 `[ ]` / `[/]`：");

@@ -98,6 +98,8 @@ Task Entity 在 Daily 中以不带 Checkbox 的普通列表项标题标识所有
 - 周/月统计消费已经保存的每日归属，不将季度 DIDA 总量映射到每个关联 Task，也不据当前映射重算历史。
 - Task 与 Theme 的关联不是工时分摊规则，不提供精确 Theme 工时。
 
+Todo 的可选截止日期按 [[agents/schema/workflows/task-todo|Task Todo 工作流]] 的 DDL 规则维护，精度为 YYYY-MM-DD，独立于 Task 全局 due。
+
 ## 页面正文
 
 - `目标`：任务完成时应成立的结果。

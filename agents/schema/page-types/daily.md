@@ -81,6 +81,8 @@ Daily Review 逐条查看小零碎并扫描整篇人工内容，无需先把片�
 
 高置信、可以脱离当天上下文重读的个人想法由 Daily Review 直接追加到当月 Insight Log，每条保留 Daily 来源，并在正文末尾沿用用户手写的主题标签，未写或不足时再按默认 1–3 个 `#topic/主题` 补充，保留必要上下文与不确定性，作为后续跨日期检索和知识编译的材料。普通流水账与含义不确定的碎片不自动提升。标签不等于已验证知识或 Theme，新 Theme 仍必须由用户明确确认。
 
+导航后设「今日 DDL」创建时清单，由模板的 task-ddl:pending 标记一次性生成，列出当天到期且未完成的 Task Todo，并链接原事项。详细生成范围与历史保护见 [[agents/schema/workflows/task-todo|Task Todo 工作流]]。
+
 ## 手写入口与 Todo 笔记
 
 新建 Task 和日常补录都在 `## Todo` 使用「事项｜状态｜完成时间｜备注」四列表格，每项一行。表头、分隔线和数据行之间不留空行，单元格中的竖线写成 `\|`，备注按来源日期组织并用 <br> 换行。保留 task-step 元数据、完成日链接和唯一的 ^step-NNN 兼容锚点。Daily review 只补尚未记录的过程笔记，保留原文和来源链接。详见 `agents/schema/workflows/task-todo.md`。

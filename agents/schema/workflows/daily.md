@@ -29,6 +29,8 @@ Daily 中的 Task 使用不带 Checkbox 的普通列表项 wikilink 标题作为
 
 Agent 晨间保留可编辑的 Daily 切片；手写新增事项在 `/daily-review` 时再匹配或录入 Task Todo 并补精确回链；当天笔记整理到对应 Todo 的日期下，Daily 原文保留。
 
+导航后设「今日 DDL」创建时清单，由模板的 task-ddl:pending 标记一次性生成，列出当天到期且未完成的 Task Todo，并链接原事项。详细生成范围与历史保护见 [[agents/schema/workflows/task-todo|Task Todo 工作流]]。
+
 ## 日间更新
 
 - 用 Highlightr 的 Red 标记当天重点。选中任务或事件文字即可，勾选框与明细回链放在高亮外。

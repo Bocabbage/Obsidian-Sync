@@ -202,3 +202,36 @@ test("handwritten review is completed by adding a link, without requiring action
   assert.deepEqual(model.reviewLinks(linked, [parse(step)]), []);
   assert.equal(model.occurrences(hand).items[0].text, "今天完成的局部排查");
 });
+
+test("Daily header freezes today's unfinished deadlines once, including blocked and paused tasks", () => {
+  const ddlDate = "2026-09-20";
+  const active = parse([
+    "- [ ] 到期 ➕ 2026-09-18 📅 2026-09-20 ^step-001",
+    "- [x] 已完成 ➕ 2026-09-18 📅 2026-09-20 ✅ 2026-09-19 ^step-002",
+    "- [ ] 逾期 ➕ 2026-09-18 📅 2026-09-19 ^step-003",
+    "- [ ] 未来 ➕ 2026-09-18 📅 2026-09-21 ^step-004",
+    "- [-] 已取消 ➕ 2026-09-18 📅 2026-09-20 [closed:: 2026-09-19] ^step-005",
+  ].join("\n"));
+  const blocked = { ...parse("- [/] 暂停到期 ➕ 2026-09-18 📅 2026-09-20 [carry:: paused] ^step-006", "blocked"),
+    path: "workspace/tasks/TASK-202609-002" };
+  const result = plan([active, blocked]);
+  assert.deepEqual(result.errors, []);
+  const header = result.markdown.split("## 任务池")[0];
+  assert.match(header, /今日 DDL/);
+  assert.match(header, /到期 ↪/);
+  assert.match(header, /暂停到期 ↪/);
+  assert.doesNotMatch(header, /已完成|已取消|逾期|未来/);
+  assert.doesNotMatch(header, /\[ \]/);
+  assert.ok(!result.added.some(item => item.path === blocked.path));
+  const frozen = plan([], { markdown: result.markdown, manual: true });
+  assert.equal(frozen.markdown, result.markdown);
+  const empty = plan([]).markdown;
+  assert.match(empty, /今天没有到期的未完成 Task Todo/);
+  assert.equal(plan([active], { markdown: result.markdown, date: "2026-09-21", manual: true }).markdown, result.markdown);
+  assert.equal(plan([active], { markdown: template.replace("status: open", "status: closed") }).markdown, template.replace("status: open", "status: closed"));
+  const bad = plan([parse("- [ ] 日期非法 ➕ 2026-09-18 📅 2026-02-30 ^step-001")]);
+  assert.ok(bad.errors.length);
+  assert.equal(bad.markdown, template);
+  const duplicate = template.replace("<!-- task-ddl:pending -->", "<!-- task-ddl:pending -->\n<!-- task-ddl:pending -->");
+  assert.equal(plan([active], { markdown: duplicate }).markdown, duplicate);
+});

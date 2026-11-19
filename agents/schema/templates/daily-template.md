@@ -11,6 +11,8 @@ status: open
 
 > [[workspace/daily/_Index|📅 Daily 总览]]
 
+<!-- task-ddl:pending -->
+
 ## 任务池
 
 > [[workspace/tasks/_Index|查看全部 Tasks]] · 截至本页日期仍未全局闭环的 Task；只把今天实际推进的 Task 作为 occurrence 放入“跨日任务”。

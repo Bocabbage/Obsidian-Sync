@@ -148,3 +148,35 @@ test("saved historical plans win over later source edits; old snapshots get no i
   const old = checkPool(t, rows, { date: base.date, closed: true, snapshot: "<!-- todo-snapshot " + JSON.stringify(legacy) + " -->" });
   assert.equal(old.status, 0);
 });
+
+test("DDL review finds unplanned and paused deadlines, skips finished/future, preserves closed history", t => {
+  const root = mkdtempSync(join(tmpdir(), "task-ddl-review-"));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  mkdirSync(join(root, "workspace/tasks"), { recursive: true });
+  const file = join(root, "workspace/daily.md");
+  const task = join(root, "workspace/tasks/TASK-202609-001.md");
+  writeFileSync(task, [
+    "---", "type: task", "status: blocked", "created: 2026-09-01", "---", "## Todo",
+    "- [ ] 到期 ➕ 2026-09-01 📅 2026-10-03 ^step-001",
+    "- [/] 暂停逾期 ➕ 2026-09-01 [carry:: paused] 📅 2026-10-02 ^step-002",
+    "- [x] 完成 ➕ 2026-09-01 📅 2026-10-02 ✅ 2026-10-02 ^step-003",
+    "- [ ] 未来 ➕ 2026-09-01 📅 2026-10-04 ^step-004",
+  ].join("\n"));
+  const run = markdown => {
+    writeFileSync(file, markdown);
+    const result = spawnSync(process.execPath, [script, "--file", file, "--format", "json"], { encoding: "utf8" });
+    assert.equal(result.stderr, "");
+    assert.equal(readFileSync(file, "utf8"), markdown);
+    return JSON.parse(result.stdout);
+  };
+  const markdown = header + "> [!note] 今日心情\n> 🙂" + done;
+  const report = run(markdown);
+  assert.equal(report.closeable, true);
+  assert.deepEqual(report.taskDeadlines.map(item => [item.id, item.state]), [
+    ["step-001", "今日到期"], ["step-002", "已逾期"],
+  ]);
+  assert.deepEqual(run(markdown.replace("status: open", "status: closed")).taskDeadlines, []);
+  writeFileSync(task, readFileSync(task, "utf8").replace("📅 2026-10-03", "📅 2026-02-30"));
+  assert.equal(run(markdown).closeable, false);
+  assert.equal(run(markdown).taskDeadlineIssues.length, 1);
+});
